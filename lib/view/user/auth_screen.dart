@@ -26,10 +26,15 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: TabBarView(
         physics: const NeverScrollableScrollPhysics(),
         controller: controller,
-        children: screens,
+        children: screens
+            .map((e) => SingleChildScrollView(
+                  child: e,
+                ))
+            .toList(),
       ),
     );
   }

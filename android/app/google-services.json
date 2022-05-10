@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "968413471908",
+    "project_id": "fenwicks-pub",
+    "storage_bucket": "fenwicks-pub.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:968413471908:android:fa2b34d0e0f011e7a27231",
+        "android_client_info": {
+          "package_name": "com.fenwicks.pub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "968413471908-ga0qhliouukhilrucp6gttfql7oitebh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMN10JtGxI1pL7l-0VEn7bGYBfRtODD2g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "968413471908-ga0qhliouukhilrucp6gttfql7oitebh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
