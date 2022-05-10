@@ -42,11 +42,11 @@ class Login extends StatelessWidget {
             fontFamily: 'Open Sans',
             weight: FontWeight.w300,
           ),
-          MyTextField(
+          const MyTextField(
             hintText: 'Email Address',
             paddingBottom: 30.0,
           ),
-          MyTextField(
+          const MyTextField(
             hintText: 'Password',
             obSecure: true,
             paddingBottom: 35.0,

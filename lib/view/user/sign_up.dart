@@ -1,3 +1,5 @@
+import 'package:fenwicks_pub/controller/auth_controller.dart';
+import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/constant/app_styling.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
@@ -9,11 +11,16 @@ import 'package:get/get.dart';
 
 class SignUp extends StatelessWidget {
   final TabController controller;
-  const SignUp({
+  SignUp({
     Key? key,
     required this.controller,
   }) : super(key: key);
 
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  final TextEditingController confirmPassword = TextEditingController();
+  final TextEditingController name = TextEditingController();
+  final TextEditingController phone = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,21 +49,52 @@ class SignUp extends StatelessWidget {
             weight: FontWeight.w300,
           ),
           MyTextField(
-            hintText: 'Email Address',
+            controller: name,
+            hintText: 'Full Name',
             paddingBottom: 30.0,
+            keyboardType: TextInputType.name,
           ),
           MyTextField(
+            controller: email,
+            hintText: 'Email Address',
+            paddingBottom: 30.0,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          MyTextField(
+            controller: phone,
+            hintText: 'Phone',
+            paddingBottom: 30.0,
+            keyboardType: TextInputType.phone,
+          ),
+          MyTextField(
+            controller: password,
             hintText: 'Password',
             obSecure: true,
             paddingBottom: 30.0,
           ),
           MyTextField(
+            controller: confirmPassword,
             hintText: 'Confirm Password',
             obSecure: true,
             paddingBottom: 35.0,
           ),
           MyButton(
-            onTap: () {},
+            onTap: () {
+              final AuthController auth = Get.put(AuthController());
+              if (name.text.trim().isNotEmpty && email.text.trim().isNotEmpty && phone.text.trim().isNotEmpty && password.text.trim().isNotEmpty && confirmPassword.text.trim().isNotEmpty) {
+                if (password.text.trim() == confirmPassword.text.trim()) {
+                  Map<String, dynamic> data = {
+                    "email": email.text.trim(),
+                    "name": name.text.trim(),
+                    "phone": phone.text.trim(),
+                  };
+                  var user = Users.fromJson(data);
+                  auth.register(user, password.text.trim());
+                }
+              } else {
+                return;
+              }
+            },
             text: 'SIGN UP',
           ),
           const SizedBox(
