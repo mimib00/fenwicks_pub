@@ -31,14 +31,6 @@ class AppRoutes {
       name: AppLinks.auth,
       page: () => const AuthScreen(),
     ),
-    // GetPage(
-    //   name: AppLinks.login,
-    //   page: () => const Login(),
-    // ),
-    // GetPage(
-    //   name: AppLinks.signUp,
-    //   page: () => const SignUp(),
-    // ),
     GetPage(
       name: AppLinks.events,
       page: () => const Events(),

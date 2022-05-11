@@ -1,3 +1,4 @@
+import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
@@ -10,177 +11,178 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: Get.height,
-            width: Get.width,
-            padding: const EdgeInsets.only(
-              top: 35,
-            ),
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(kBlurEffect),
-                alignment: Alignment.topCenter,
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () => Get.back(),
-                        icon: Image.asset(
-                          kArrowBack,
-                          color: kWhiteColor,
-                          height: 14.25,
-                        ),
-                      ),
-                    ],
-                  ),
-                  trailing: Wrap(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: Image.asset(
-                          kNotificationIcon,
-                          height: 20,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Image.asset(
-                          kMenuIcon,
-                          height: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Container(
-                  height: 93,
-                  width: 93,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: kBlackColor.withOpacity(0.16),
-                        offset: const Offset(0, 3),
-                        blurRadius: 6,
-                      ),
-                    ],
-                    borderRadius: BorderRadius.circular(100),
-                    image: const DecorationImage(
-                      image: AssetImage(
-                        kDummyUser,
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                MyText(
-                  paddingTop: 20,
-                  text: 'Elizabeth Nicks',
-                  size: 21,
-                  weight: FontWeight.w700,
-                  fontFamily: 'Poppins',
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 270,
-            child: Container(
+    return GetBuilder<AuthController>(builder: (controller) {
+      final user = controller.user.value!;
+      return Scaffold(
+        body: Stack(
+          children: [
+            Container(
               height: Get.height,
               width: Get.width,
+              padding: const EdgeInsets.only(
+                top: 35,
+              ),
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(kClippedEffect),
+                  image: AssetImage(kBlurEffect),
                   alignment: Alignment.topCenter,
                   fit: BoxFit.cover,
                 ),
               ),
-              child: ListView(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                ),
+              child: Column(
                 children: [
-                  const SizedBox(
-                    height: 80,
-                  ),
-                  ProfileTiles(
-                    leading: 'Name',
-                    trailing: 'Elizabeth Nicks',
-                  ),
-                  ProfileTiles(
-                    leading: 'Email',
-                    trailing: 'Email@gmail.com',
-                  ),
-                  ProfileTiles(
-                    leading: 'Password',
-                    trailing: '*********',
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  ListTile(
+                    leading: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        MyText(
-                          text: 'Reward History',
-                          size: 16,
-                          weight: FontWeight.w700,
+                        IconButton(
+                          onPressed: () => Get.back(),
+                          icon: Image.asset(
+                            kArrowBack,
+                            color: kWhiteColor,
+                            height: 14.25,
+                          ),
                         ),
-                        MyText(
-                          text: 'View All',
-                          size: 11,
+                      ],
+                    ),
+                    trailing: Wrap(
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Image.asset(
+                            kNotificationIcon,
+                            height: 20,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Image.asset(
+                            kMenuIcon,
+                            height: 20,
+                          ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(
-                    height: 40,
+                    height: 15,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
+                  Container(
+                    height: 93,
+                    width: 93,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: kBlackColor.withOpacity(0.16),
+                          offset: const Offset(0, 3),
+                          blurRadius: 6,
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(100),
+                      image: const DecorationImage(
+                        image: AssetImage(
+                          kDummyUser,
+                        ),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                    child: totalRewardPoints(114),
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: 15,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 20,
-                    ),
-                    itemBuilder: (context, index) {
-                      return const PRewardHistoryTiles();
-                    },
-                  ),
-                  const SizedBox(
-                    height: 250,
+                  MyText(
+                    paddingTop: 20,
+                    text: user.name,
+                    size: 21,
+                    weight: FontWeight.w700,
+                    fontFamily: 'Poppins',
                   ),
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
+            Positioned(
+              top: 270,
+              child: Container(
+                height: Get.height,
+                width: Get.width,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(kClippedEffect),
+                    alignment: Alignment.topCenter,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: ListView(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                  ),
+                  children: [
+                    const SizedBox(
+                      height: 80,
+                    ),
+                    ProfileTiles(
+                      leading: 'Name',
+                      trailing: user.name,
+                    ),
+                    ProfileTiles(
+                      leading: 'Email',
+                      trailing: user.email,
+                    ),
+                    ProfileTiles(
+                      leading: 'Password',
+                      trailing: '*********',
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          MyText(
+                            text: 'Reward History',
+                            size: 16,
+                            weight: FontWeight.w700,
+                          ),
+                          MyText(
+                            text: 'View All',
+                            size: 11,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                      ),
+                      child: totalRewardPoints(user.points),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: 15,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 20,
+                      ),
+                      itemBuilder: (context, index) {
+                        return const PRewardHistoryTiles();
+                      },
+                    ),
+                    const SizedBox(
+                      height: 250,
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 }
-
-
 
 // ignore: must_be_immutable
 class ProfileTiles extends StatelessWidget {
@@ -276,8 +278,7 @@ class PRewardHistoryTiles extends StatelessWidget {
             fontFamily: 'Poppins',
           ),
           subtitle: MyText(
-            text:
-            '14 points rewarded on going on event\n"Event name will come here"',
+            text: '14 points rewarded on going on event\n"Event name will come here"',
             size: 11,
             maxLines: 2,
             overFlow: TextOverflow.ellipsis,

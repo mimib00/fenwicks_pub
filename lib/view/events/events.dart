@@ -39,7 +39,7 @@ class Events extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 15,
                 ),
-                child: totalRewardPoints(14),
+                child: totalRewardPoints(20),
               ),
               MyText(
                 paddingTop: 15,

@@ -10,11 +10,11 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 // ignore: must_be_immutable
 class EventsDetailView extends StatelessWidget {
-  EventsDetailView({
+  const EventsDetailView({
     Key? key,
     this.eventName,
   }) : super(key: key);
-  String? eventName;
+  final String? eventName;
 
   @override
   Widget build(BuildContext context) {
@@ -105,14 +105,13 @@ class EventsDetailView extends StatelessWidget {
                             children: [
                               MyText(
                                 paddingBottom: 10,
-                                text: 'Events Name',
+                                text: 'Event Name',
                                 size: 25,
                                 weight: FontWeight.w600,
                                 fontFamily: 'Poppins',
                               ),
                               MyText(
-                                text:
-                                    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
+                                text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
                                 size: 14,
                                 weight: FontWeight.w400,
                                 color: kWhiteColor.withOpacity(0.65),
@@ -125,11 +124,9 @@ class EventsDetailView extends StatelessWidget {
                                   Expanded(
                                     child: Container(
                                       height: 135,
-                                      decoration: ContainerDecorations
-                                          .detailEventsCardDec,
+                                      decoration: ContainerDecorations.detailEventsCardDec,
                                       child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
                                           MyText(
                                             text: 'Happening On',
@@ -139,8 +136,7 @@ class EventsDetailView extends StatelessWidget {
                                           ),
                                           Wrap(
                                             spacing: 2,
-                                            crossAxisAlignment:
-                                                WrapCrossAlignment.end,
+                                            crossAxisAlignment: WrapCrossAlignment.end,
                                             children: [
                                               MyText(
                                                 text: '21',
@@ -173,11 +169,9 @@ class EventsDetailView extends StatelessWidget {
                                   Expanded(
                                     child: Container(
                                       height: 135,
-                                      decoration: ContainerDecorations
-                                          .detailEventsCardDec,
+                                      decoration: ContainerDecorations.detailEventsCardDec,
                                       child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
                                           MyText(
                                             text: 'Attendance Rewards',
@@ -206,8 +200,7 @@ class EventsDetailView extends StatelessWidget {
                                 ],
                               ),
                               MyText(
-                                text:
-                                    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
+                                text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
                                 size: 14,
                                 weight: FontWeight.w400,
                                 color: kWhiteColor.withOpacity(0.65),
@@ -229,8 +222,7 @@ class EventsDetailView extends StatelessWidget {
                                 children: List.generate(
                                   5,
                                   (index) {
-                                    var interestedPeoples =
-                                        controller.interestedPeoples[index];
+                                    var interestedPeoples = controller.interestedPeoples[index];
                                     return Padding(
                                       padding: EdgeInsets.only(
                                         left: index == 0

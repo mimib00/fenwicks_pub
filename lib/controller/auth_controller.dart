@@ -9,6 +9,8 @@ import '../routes/routes.dart';
 class AuthController extends GetxController {
   final _ref = FirebaseFirestore.instance.collection("users");
 
+  Rx<Users?> user = Rx<Users?>(null);
+
   /// login the user.
   void login(String email, String password) async {
     try {
@@ -33,16 +35,25 @@ class AuthController extends GetxController {
     User userCredential = FirebaseAuth.instance.currentUser!;
     try {
       _ref.doc(userCredential.uid).set(user.toMap());
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
     }
     userCredential.sendEmailVerification();
-    logout();
     Get.showSnackbar(messageCard("Check email and verify email"));
   }
 
   /// fetch user data from firestore and cast it to a [Users] object.
-  void getUserData() async {}
+  Future<void> getUserData(String id) async {
+    DocumentSnapshot<Map<String, dynamic>>? doc;
+    try {
+      doc = await _ref.doc(id).get();
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+
+    user.value = Users.fromJson(doc!.data()!, uid: doc.id);
+    update();
+  }
 
   void logout() async {
     await FirebaseAuth.instance.signOut();
@@ -60,21 +71,22 @@ class AuthController extends GetxController {
 
   @override
   void onInit() {
-    FirebaseAuth.instance.authStateChanges().listen((user) {
-      if (user != null) {
-        if (emailVerified(user)) {
-          // got to home.
-          // TODO: get user data.
-          Get.offAllNamed(AppLinks.events);
+    FirebaseAuth.instance.authStateChanges().listen(
+      (user) {
+        if (user != null) {
+          if (emailVerified(user)) {
+            // got to home.
+            getUserData(user.uid).then((value) => Get.offAllNamed(AppLinks.events));
+          } else {
+            // stay in login.
+            Get.showSnackbar(errorCard("Please check your email."));
+          }
         } else {
-          // stay in login.
-          Get.showSnackbar(errorCard("Please check your email."));
+          // go to login.
+          Get.offAllNamed(AppLinks.getStarted);
         }
-      } else {
-        // go to login.
-        Get.offAllNamed(AppLinks.getStarted);
-      }
-    });
+      },
+    );
     super.onInit();
   }
 }
