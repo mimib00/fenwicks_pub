@@ -1,22 +1,22 @@
+import 'package:fenwicks_pub/model/product.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/back_button.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:fenwicks_pub/view/widget/total_price_and_order_now.dart';
-import 'package:fenwicks_pub/view/your_bag/your_bag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 
+import '../your_bag/your_bag.dart';
+
 // ignore: must_be_immutable
 class ProductDetails extends StatelessWidget {
-  ProductDetails({
+  final Product? product;
+  const ProductDetails({
     Key? key,
-    this.drinkName,
-    this.price,
+    this.product,
   }) : super(key: key);
-  String? drinkName;
-  int? price;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class ProductDetails extends StatelessWidget {
         ),
         centerTitle: true,
         title: MyText(
-          text: '$drinkName',
+          text: product!.name,
           size: 24,
           weight: FontWeight.w600,
           fontFamily: 'Poppins',
@@ -44,7 +44,7 @@ class ProductDetails extends StatelessWidget {
             child: IconButton(
               onPressed: () => Get.to(
                 () => YourBag(
-                  price: price,
+                  price: product!.price,
                 ),
               ),
               icon: Image.asset(
@@ -103,8 +103,7 @@ class ProductDetails extends StatelessWidget {
             paddingBottom: 10,
           ),
           MyText(
-            text:
-                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
+            text: product!.description,
             size: 15,
             weight: FontWeight.w400,
             color: kWhiteColor.withOpacity(0.65),
@@ -113,7 +112,7 @@ class ProductDetails extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: TotalPriceAndOrderNow(),
+      bottomNavigationBar: TotalPriceAndOrderNow(product: product),
     );
   }
 
@@ -133,7 +132,7 @@ class ProductDetails extends StatelessWidget {
                 fontFamily: 'Poppins',
               ),
               RatingBarIndicator(
-                rating: 3,
+                rating: double.parse(product!.rating.toString()),
                 unratedColor: kSecondaryColor.withOpacity(0.3),
                 itemBuilder: (context, index) => Image.asset(
                   kRatingStar,
@@ -184,7 +183,7 @@ class ProductDetails extends StatelessWidget {
                 fontFamily: 'Poppins',
               ),
               MyText(
-                text: 'People : 4',
+                text: 'People : ${product!.servings}',
                 size: 17,
                 color: kSecondaryColor,
                 weight: FontWeight.w400,
@@ -224,7 +223,7 @@ class ProductDetails extends StatelessWidget {
             fontFamily: 'Poppins',
           ),
           MyText(
-            text: '\$$price',
+            text: '\$${product!.price}',
             size: 22,
             weight: FontWeight.w600,
             fontFamily: 'Poppins',

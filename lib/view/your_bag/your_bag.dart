@@ -12,7 +12,7 @@ class YourBag extends StatelessWidget {
     Key? key,
     this.price,
   }) : super(key: key);
-  int? price;
+  double? price;
 
   @override
   Widget build(BuildContext context) {

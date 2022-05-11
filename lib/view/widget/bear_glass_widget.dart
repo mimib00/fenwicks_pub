@@ -1,3 +1,4 @@
+import 'package:fenwicks_pub/model/product.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/product_details/product_details.dart';
@@ -8,26 +9,18 @@ import 'my_text.dart';
 
 // ignore: must_be_immutable
 class BearGlassWidget extends StatelessWidget {
-  BearGlassWidget({
+  final Product? product;
+  final bool isGridView;
+  const BearGlassWidget({
     Key? key,
-    this.drinkName,
-    this.price,
+    this.product,
     this.isGridView = false,
   }) : super(key: key);
-
-  String? drinkName;
-  int? price;
-  bool? isGridView;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.to(
-        () => ProductDetails(
-          drinkName: drinkName,
-          price: price,
-        ),
-      ),
+      onTap: () => Get.to(() => ProductDetails(product: product)),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -50,7 +43,7 @@ class BearGlassWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 MyText(
-                  text: '$drinkName',
+                  text: product!.name,
                   size: isGridView == true ? 17 : 14,
                   maxLines: 1,
                   overFlow: TextOverflow.ellipsis,
@@ -72,7 +65,7 @@ class BearGlassWidget extends StatelessWidget {
                         ),
                         child: Center(
                           child: MyText(
-                            text: '\$$price',
+                            text: '\$${product!.price}',
                             maxLines: 1,
                             overFlow: TextOverflow.ellipsis,
                             size: isGridView == true ? 17 : 14,

@@ -1,4 +1,4 @@
-import 'package:fenwicks_pub/routes/routes.dart';
+import 'package:fenwicks_pub/controller/shop_controller.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/drawer/my_drawer.dart';
@@ -49,102 +49,48 @@ class TopSaleAndFutureProducts extends StatelessWidget {
             ),
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 30, 15, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    MyText(
-                      text: 'Top Sale',
-                      size: 21,
-                      weight: FontWeight.w700,
-                      fontFamily: 'Poppins',
-                    ),
-                    MyText(
-                      onTap: () => Get.toNamed(
-                        AppLinks.topSaleAndFutureProducts,
-                      ),
-                      text: 'View All',
-                      size: 18,
-                      color: kWhiteColor.withOpacity(0.5),
-                      weight: FontWeight.w400,
-                      fontFamily: 'Poppins',
-                    ),
-                  ],
+                child: MyText(
+                  text: 'Future Products',
+                  size: 21,
+                  weight: FontWeight.w700,
+                  fontFamily: 'Poppins',
                 ),
               ),
-              SizedBox(
-                height: 220,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 7,
-                  ),
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return Align(
-                      child: BearGlassWidget(
-                        drinkName: 'Drink Name',
-                        price: 88,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    MyText(
-                      text: 'Future Products',
-                      size: 21,
-                      weight: FontWeight.w700,
-                      fontFamily: 'Poppins',
+              GetBuilder<ShopController>(
+                init: ShopController(),
+                builder: (controller) {
+                  if (controller.products.isEmpty) {
+                    controller.getAllProducts();
+                  }
+                  final products = controller.products;
+
+                  if (products.isEmpty) return Container();
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: products.length,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 40,
                     ),
-                    MyText(
-                      onTap: () => Get.toNamed(
-                        AppLinks.topSaleAndFutureProducts,
-                      ),
-                      text: 'View All',
-                      size: 18,
-                      color: kWhiteColor.withOpacity(0.5),
-                      weight: FontWeight.w400,
-                      fontFamily: 'Poppins',
-                    ),
-                  ],
-                ),
-              ),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                itemCount: 5,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 40,
-                ),
-                itemBuilder: (context, index) {
-                  return Align(
-                    child: BearGlassWidget(
-                      drinkName: 'Drink Name',
-                      price: 88,
-                      isGridView: true,
+                    itemBuilder: (context, index) {
+                      final product = products[index];
+                      return Align(
+                        child: BearGlassWidget(product: product),
+                      );
+                    },
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 15,
+                      mainAxisExtent: 181,
+                      mainAxisSpacing: 55.0,
                     ),
                   );
                 },
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisExtent: 181,
-                  mainAxisSpacing: 55.0,
-                ),
               ),
             ],
           ),

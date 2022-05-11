@@ -1,5 +1,7 @@
 import 'package:fenwicks_pub/controller/events_controller/events_controller.dart';
+import 'package:fenwicks_pub/controller/shop_controller.dart';
 import 'package:fenwicks_pub/model/events_model/events_model.dart';
+import 'package:fenwicks_pub/model/product.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
@@ -166,27 +168,36 @@ class Events extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 220,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                      ),
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return Row(
-                          children: [
-                            BearGlassWidget(
-                              drinkName: 'Drink Name',
-                              price: 88,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                  GetBuilder<ShopController>(
+                    init: ShopController(),
+                    builder: (controller) {
+                      if (controller.products.isEmpty) {
+                        controller.getAllProducts();
+                      }
+                      final products = controller.products;
+                      if (products.isEmpty) return Container();
+                      return SizedBox(
+                        height: 220,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                          ),
+                          itemCount: products.length > 5 ? 5 : products.length,
+                          itemBuilder: (context, index) {
+                            final product = products[index];
+                            return Row(
+                              children: [
+                                BearGlassWidget(
+                                  product: product,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

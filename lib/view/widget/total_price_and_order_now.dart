@@ -1,3 +1,4 @@
+import 'package:fenwicks_pub/model/product.dart';
 import 'package:fenwicks_pub/view/address/address.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,12 @@ import 'my_text.dart';
 
 // ignore: must_be_immutable
 class TotalPriceAndOrderNow extends StatelessWidget {
-  String? buttonText;
-  VoidCallback? onOrderTap;
-
-  TotalPriceAndOrderNow({
+  final String buttonText;
+  final VoidCallback? onOrderTap;
+  final Product? product;
+  const TotalPriceAndOrderNow({
     Key? key,
+    this.product,
     this.buttonText = 'Order Now',
     this.onOrderTap,
   }) : super(key: key);
@@ -66,17 +68,15 @@ class TotalPriceAndOrderNow extends StatelessWidget {
               SizedBox(
                 width: 128.97,
                 child: MaterialButton(
-                  onPressed: onOrderTap ?? () => Get.to(
-                    () => Address(),
-                  ),
+                  onPressed: product!.qty > 0 ? () => Get.to(() => Address()) : () {},
                   height: 45.51,
                   elevation: 10,
-                  color: kPrimaryColor,
+                  color: product!.qty > 0 ? kPrimaryColor : kRedColor,
                   splashColor: kWhiteColor.withOpacity(0.1),
                   highlightColor: kWhiteColor.withOpacity(0.1),
                   shape: const StadiumBorder(),
                   child: MyText(
-                    text: "$buttonText",
+                    text: product!.qty > 0 ? buttonText : "Out Of Stock",
                     size: 13,
                     weight: FontWeight.w500,
                     color: kWhiteColor,

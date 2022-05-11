@@ -108,9 +108,13 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
                 title: 'Profile',
                 onTap: () => Get.toNamed(AppLinks.profile),
               ),
-              DrawerTiles(
-                title: 'Logout',
-                onTap: () => Get.back(),
+              GetBuilder<AuthController>(
+                builder: (controller) {
+                  return DrawerTiles(
+                    title: 'Logout',
+                    onTap: () => controller.logout(),
+                  );
+                },
               ),
             ],
           ),

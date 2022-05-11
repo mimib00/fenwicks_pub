@@ -55,8 +55,10 @@ class AuthController extends GetxController {
     update();
   }
 
+  /// Logout the currently logged user and remove it's info.
   void logout() async {
     await FirebaseAuth.instance.signOut();
+    user.value = null;
   }
 
   /// Check if user has verified his email.
