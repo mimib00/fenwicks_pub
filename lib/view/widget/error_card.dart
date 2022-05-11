@@ -31,3 +31,34 @@ GetSnackBar errorCard(String error) {
     ),
   );
 }
+
+GetSnackBar messageCard(String msg) {
+  return GetSnackBar(
+    backgroundColor: Colors.green[400]!,
+    margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+    snackPosition: SnackPosition.BOTTOM,
+    borderRadius: 20,
+    messageText: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          msg,
+          style: const TextStyle(
+            fontSize: 18,
+            fontFamily: "Baloo",
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+    titleText: const Text(
+      "Messaage",
+      style: TextStyle(
+        fontSize: 18,
+        fontFamily: "Baloo",
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+    ),
+  );
+}

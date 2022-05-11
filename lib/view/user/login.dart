@@ -1,4 +1,3 @@
-import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/app_styling.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
@@ -8,12 +7,17 @@ import 'package:fenwicks_pub/view/widget/my_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../controller/auth_controller.dart';
+
 class Login extends StatelessWidget {
   final TabController controller;
-  const Login({
+  Login({
     Key? key,
     required this.controller,
   }) : super(key: key);
+
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -42,17 +46,25 @@ class Login extends StatelessWidget {
             fontFamily: 'Open Sans',
             weight: FontWeight.w300,
           ),
-          const MyTextField(
+          MyTextField(
             hintText: 'Email Address',
             paddingBottom: 30.0,
+            keyboardType: TextInputType.emailAddress,
+            controller: email,
           ),
-          const MyTextField(
+          MyTextField(
             hintText: 'Password',
             obSecure: true,
             paddingBottom: 35.0,
+            controller: password,
           ),
           MyButton(
-            onTap: () => Get.offAllNamed(AppLinks.events),
+            onTap: () {
+              final AuthController auth = Get.put(AuthController());
+              if (email.text.trim().isNotEmpty && password.text.trim().isNotEmpty) {
+                auth.login(email.text.trim(), password.text.trim());
+              }
+            },
             text: 'sign in',
           ),
           MyText(

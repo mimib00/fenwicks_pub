@@ -1,3 +1,4 @@
+import 'package:fenwicks_pub/controller/binding.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/app_styling.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       debugShowMaterialGrid: false,
+      initialBinding: Bind(),
       title: 'Fenwick\'s Pub',
       theme: AppStyling.styling,
       themeMode: ThemeMode.light,
