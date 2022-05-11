@@ -12,6 +12,8 @@ import 'package:fenwicks_pub/view/widget/total_reward_points.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../controller/auth_controller.dart';
+
 // ignore: must_be_immutable
 class Events extends StatelessWidget {
   const Events({
@@ -381,39 +383,45 @@ class ProfileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 15,
-      ),
-      title: MyText(
-        text: 'Hello, Geralt !',
-        size: 18,
-        weight: FontWeight.w700,
-        fontFamily: 'Poppins',
-      ),
-      subtitle: MyText(
-        paddingTop: 5,
-        text: 'Let\'s explore what’s happening nearby',
-        size: 14,
-        weight: FontWeight.w500,
-        fontFamily: 'Poppins',
-      ),
-      trailing: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          color: kSecondaryColor,
-        ),
-        child: Flexible(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: Image.asset(
-              kDummyUser,
-              fit: BoxFit.cover,
+    return GetBuilder<AuthController>(
+      builder: (controller) {
+        final user = controller.user.value!;
+        final name = user.name.split(" ")[0];
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 15,
+          ),
+          title: MyText(
+            text: 'Hello, $name!',
+            size: 18,
+            weight: FontWeight.w700,
+            fontFamily: 'Poppins',
+          ),
+          subtitle: MyText(
+            paddingTop: 5,
+            text: 'Let\'s explore what’s happening nearby',
+            size: 14,
+            weight: FontWeight.w500,
+            fontFamily: 'Poppins',
+          ),
+          trailing: Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              color: kSecondaryColor,
+            ),
+            child: Flexible(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Image.asset(
+                  kDummyUser,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

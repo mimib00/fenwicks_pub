@@ -1,4 +1,5 @@
 import 'package:fancy_drawer/fancy_drawer.dart';
+import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
@@ -22,8 +23,7 @@ class MyDrawer extends StatefulWidget {
   _MyDrawerState createState() => _MyDrawerState();
 }
 
-class _MyDrawerState extends State<MyDrawer>
-    with SingleTickerProviderStateMixin {
+class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin {
   late FancyDrawerController _controller;
 
   @override
@@ -65,11 +65,17 @@ class _MyDrawerState extends State<MyDrawer>
                   kDrawerInsideLogo,
                   height: 80.61,
                 ),
-                MyText(
-                  paddingTop: 15,
-                  text: 'Hey Geralt!',
-                  weight: FontWeight.w700,
-                  size: 25,
+                GetBuilder<AuthController>(
+                  builder: (controller) {
+                    final user = controller.user.value!;
+                    final name = user.name.split(" ")[0];
+                    return MyText(
+                      paddingTop: 15,
+                      text: 'Hey $name!',
+                      weight: FontWeight.w700,
+                      size: 25,
+                    );
+                  },
                 ),
               ],
             ),
