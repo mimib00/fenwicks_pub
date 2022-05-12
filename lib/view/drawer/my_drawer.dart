@@ -131,15 +131,14 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
   }
 }
 
-// ignore: must_be_immutable
 class DrawerTiles extends StatelessWidget {
-  DrawerTiles({
+  const DrawerTiles({
     Key? key,
     this.title,
     this.onTap,
   }) : super(key: key);
-  String? title;
-  VoidCallback? onTap;
+  final String? title;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

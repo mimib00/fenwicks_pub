@@ -1,7 +1,6 @@
 import 'package:fenwicks_pub/controller/events_controller/events_controller.dart';
 import 'package:fenwicks_pub/controller/shop_controller.dart';
 import 'package:fenwicks_pub/model/events_model/events_model.dart';
-import 'package:fenwicks_pub/model/product.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
@@ -29,7 +28,6 @@ class Events extends StatelessWidget {
       builder: (controller) {
         return MyDrawer(
           child: ListView(
-            shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.symmetric(
               vertical: 15,
@@ -300,49 +298,39 @@ class RecentEventsWidget extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        Expanded(
-                          flex: 4,
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                kCalendarIcon,
-                                height: 8.69,
-                              ),
-                              Expanded(
-                                child: MyText(
-                                  paddingLeft: 10,
-                                  text: '$date',
-                                  size: 9,
-                                  maxLines: 1,
-                                  overFlow: TextOverflow.ellipsis,
-                                  weight: FontWeight.w400,
-                                  fontFamily: 'Poppins',
-                                ),
-                              ),
-                            ],
-                          ),
+                        Row(
+                          children: [
+                            Image.asset(
+                              kCalendarIcon,
+                              height: 8.69,
+                            ),
+                            MyText(
+                              paddingLeft: 10,
+                              text: '$date',
+                              size: 9,
+                              maxLines: 1,
+                              overFlow: TextOverflow.ellipsis,
+                              weight: FontWeight.w400,
+                              fontFamily: 'Poppins',
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          flex: 6,
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                kBadgeIcon,
-                                height: 9.07,
-                              ),
-                              Expanded(
-                                child: MyText(
-                                  paddingLeft: 10,
-                                  text: '$score',
-                                  size: 9,
-                                  maxLines: 1,
-                                  overFlow: TextOverflow.ellipsis,
-                                  weight: FontWeight.w400,
-                                  fontFamily: 'Poppins',
-                                ),
-                              ),
-                            ],
-                          ),
+                        Row(
+                          children: [
+                            Image.asset(
+                              kBadgeIcon,
+                              height: 9.07,
+                            ),
+                            MyText(
+                              paddingLeft: 10,
+                              text: '$score',
+                              size: 9,
+                              maxLines: 1,
+                              overFlow: TextOverflow.ellipsis,
+                              weight: FontWeight.w400,
+                              fontFamily: 'Poppins',
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -352,16 +340,14 @@ class RecentEventsWidget extends StatelessWidget {
                           kLocationIcon,
                           height: 11.28,
                         ),
-                        Expanded(
-                          child: MyText(
-                            paddingLeft: 10,
-                            text: '$location',
-                            size: 9,
-                            maxLines: 1,
-                            overFlow: TextOverflow.ellipsis,
-                            weight: FontWeight.w400,
-                            fontFamily: 'Poppins',
-                          ),
+                        MyText(
+                          paddingLeft: 10,
+                          text: '$location',
+                          size: 9,
+                          maxLines: 1,
+                          overFlow: TextOverflow.ellipsis,
+                          weight: FontWeight.w400,
+                          fontFamily: 'Poppins',
                         ),
                       ],
                     ),

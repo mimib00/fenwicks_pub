@@ -49,7 +49,7 @@ class YourBag extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: TotalPriceAndOrderNow(),
+      bottomNavigationBar: const TotalPriceAndOrderNow(),
     );
   }
 }

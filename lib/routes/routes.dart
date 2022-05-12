@@ -37,7 +37,7 @@ class AppRoutes {
     ),
     GetPage(
       name: AppLinks.eventsDetailView,
-      page: () => EventsDetailView(),
+      page: () => const EventsDetailView(),
     ),
     GetPage(
       name: AppLinks.topSaleAndFutureProducts,
@@ -45,7 +45,7 @@ class AppRoutes {
     ),
     GetPage(
       name: AppLinks.productDetails,
-      page: () => ProductDetails(),
+      page: () => const ProductDetails(),
     ),
     GetPage(
       name: AppLinks.yourBag,
