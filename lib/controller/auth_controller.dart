@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
+import 'package:fenwicks_pub/view/widgets/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
@@ -13,18 +14,22 @@ class AuthController extends GetxController {
 
   /// login the user.
   void login(String email, String password) async {
+    Get.dialog(const LoadingCard(), barrierDismissible: false);
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseException catch (e) {
+      Get.back();
       Get.showSnackbar(errorCard(e.message!));
     }
   }
 
   /// create a user in firebase authentication.
   void register(Users user, String password) async {
+    Get.dialog(const LoadingCard(), barrierDismissible: false);
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: user.email, password: password);
     } on FirebaseException catch (e) {
+      Get.back();
       Get.showSnackbar(errorCard(e.message!));
     }
     saveUserData(user);
