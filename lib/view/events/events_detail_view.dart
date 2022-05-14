@@ -1,3 +1,4 @@
+import 'package:fenwicks_pub/controller/event_controller.dart';
 import 'package:fenwicks_pub/model/event.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
@@ -32,6 +33,8 @@ class _EventsDetailViewState extends State<EventsDetailView> {
   ];
 
   List<String> get getEventsImages => eventsImages;
+
+  String buttonText = 'Mark Yourself As Going';
 
   @override
   Widget build(BuildContext context) {
@@ -263,8 +266,16 @@ class _EventsDetailViewState extends State<EventsDetailView> {
                             height: 30,
                           ),
                           CustomButton(
-                            onPressed: () {},
-                            text: 'Mark Yourself As Going',
+                            onPressed: () async {
+                              final EventController controller = Get.find<EventController>();
+
+                              if (await controller.markAsGoing(widget.event!)) {
+                                setState(() {
+                                  buttonText = "See you soon :)";
+                                });
+                              }
+                            },
+                            text: buttonText,
                           ),
                           const SizedBox(
                             height: 30,

@@ -91,19 +91,6 @@ class Events extends StatelessWidget {
                     child: Row(
                       children: controller.eventCards,
                     ),
-                    // child: ListView.builder(
-                    //   scrollDirection: Axis.horizontal,
-                    //   shrinkWrap: true,
-                    //   physics: const BouncingScrollPhysics(),
-                    //   padding: const EdgeInsets.symmetric(
-                    //     horizontal: 7,
-                    //   ),
-                    //   itemCount: controller.eventCards.length,
-                    //   itemBuilder: (context, index) {
-                    //     var data = controller.eventCards[index];
-                    //     return data;
-                    //   },
-                    // ),
                   ),
                 ],
               ),
@@ -201,47 +188,6 @@ class Events extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget allEventsCards(AllEventsCardModel data) {
-    return Container(
-      height: Get.height,
-      margin: const EdgeInsets.symmetric(
-        horizontal: 7,
-      ),
-      width: 125,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: kSecondaryColor,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: data.onTap,
-          splashColor: kWhiteColor.withOpacity(0.05),
-          highlightColor: kWhiteColor.withOpacity(0.05),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Image.asset(
-                data.icon!,
-                height: data.iconSize,
-              ),
-              MyText(
-                paddingTop: 13,
-                text: data.title,
-                size: 14,
-                align: TextAlign.center,
-                weight: FontWeight.w500,
-                fontFamily: 'Poppins',
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
