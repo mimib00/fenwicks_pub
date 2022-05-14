@@ -1,5 +1,5 @@
-import 'package:fenwicks_pub/controller/events_controller/events_controller.dart';
 import 'package:fenwicks_pub/controller/shop_controller.dart';
+import 'package:fenwicks_pub/model/event.dart';
 import 'package:fenwicks_pub/model/events_model/events_model.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
@@ -12,10 +12,11 @@ import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:fenwicks_pub/view/widget/total_reward_points.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../controller/auth_controller.dart';
+import '../../controller/event_controller.dart';
 
-// ignore: must_be_immutable
 class Events extends StatelessWidget {
   const Events({
     Key? key,
@@ -23,9 +24,14 @@ class Events extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<EventsController>(
-      init: EventsController(),
+    return GetBuilder<EventController>(
+      init: EventController(),
       builder: (controller) {
+        if (controller.events.isEmpty) {
+          controller.getComingEvents();
+        }
+        final events = controller.events;
+        if (events.isEmpty) return Container();
         return MyDrawer(
           child: ListView(
             physics: const BouncingScrollPhysics(),
@@ -95,10 +101,11 @@ class Events extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                         horizontal: 7,
                       ),
-                      itemCount: controller.getAllEventsCardsData.length,
+                      itemCount: 0,
                       itemBuilder: (context, index) {
-                        var data = controller.getAllEventsCardsData[index];
-                        return allEventsCards(data);
+                        return Container();
+                        // var data = controller.getAllEventsCardsData[index];
+                        // return allEventsCards(data);
                       },
                     ),
                   ),
@@ -125,20 +132,15 @@ class Events extends StatelessWidget {
                     ),
                   ),
                   ListView.builder(
-                    itemCount: controller.getRecentEvents.length,
+                    itemCount: events.length > 4 ? 4 : events.length,
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
-                      var data = controller.getRecentEvents[index];
-                      return RecentEventsWidget(
-                        eventName: data.eventName,
-                        date: data.date,
-                        score: data.score,
-                        location: data.location,
-                        image: data.image,
-                      );
+                      var data = events[index];
+
+                      return RecentEventsWidget(event: data);
                     },
-                  ),
+                  )
                 ],
               ),
               Column(
@@ -168,11 +170,11 @@ class Events extends StatelessWidget {
                   ),
                   GetBuilder<ShopController>(
                     init: ShopController(),
-                    builder: (controller) {
-                      if (controller.products.isEmpty) {
-                        controller.getAllProducts();
+                    builder: (ctrl) {
+                      if (ctrl.products.isEmpty) {
+                        ctrl.getAllProducts();
                       }
-                      final products = controller.products;
+                      final products = ctrl.products;
                       if (products.isEmpty) return Container();
                       return SizedBox(
                         height: 220,
@@ -248,26 +250,19 @@ class Events extends StatelessWidget {
   }
 }
 
-// ignore: must_be_immutable
 class RecentEventsWidget extends StatelessWidget {
-  RecentEventsWidget({
+  final Event event;
+  const RecentEventsWidget({
     Key? key,
-    this.eventName,
-    this.image,
-    this.date,
-    this.score,
-    this.location,
+    required this.event,
   }) : super(key: key);
-
-  String? eventName, image, date, score, location;
 
   @override
   Widget build(BuildContext context) {
+    final date = DateFormat.yMMMMd().format(event.date.toDate());
     return GestureDetector(
       onTap: () => Get.to(
-        () => EventsDetailView(
-          eventName: eventName,
-        ),
+        () => EventsDetailView(event: event),
       ),
       child: Container(
         margin: const EdgeInsets.fromLTRB(15, 0, 15, 15),
@@ -289,7 +284,7 @@ class RecentEventsWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     MyText(
-                      text: '$eventName',
+                      text: event.name,
                       size: 14,
                       maxLines: 1,
                       overFlow: TextOverflow.ellipsis,
@@ -306,7 +301,7 @@ class RecentEventsWidget extends StatelessWidget {
                             ),
                             MyText(
                               paddingLeft: 10,
-                              text: '$date',
+                              text: date,
                               size: 9,
                               maxLines: 1,
                               overFlow: TextOverflow.ellipsis,
@@ -315,6 +310,7 @@ class RecentEventsWidget extends StatelessWidget {
                             ),
                           ],
                         ),
+                        const SizedBox(width: 10),
                         Row(
                           children: [
                             Image.asset(
@@ -322,8 +318,8 @@ class RecentEventsWidget extends StatelessWidget {
                               height: 9.07,
                             ),
                             MyText(
-                              paddingLeft: 10,
-                              text: '$score',
+                              // paddingLeft: 10,
+                              text: "${event.points} Reward points",
                               size: 9,
                               maxLines: 1,
                               overFlow: TextOverflow.ellipsis,
@@ -342,7 +338,7 @@ class RecentEventsWidget extends StatelessWidget {
                         ),
                         MyText(
                           paddingLeft: 10,
-                          text: '$location',
+                          text: event.address,
                           size: 9,
                           maxLines: 1,
                           overFlow: TextOverflow.ellipsis,
@@ -361,7 +357,7 @@ class RecentEventsWidget extends StatelessWidget {
                 bottomRight: Radius.circular(10),
               ),
               child: Image.asset(
-                '$image',
+                "assets/images/dummy_1.png",
                 height: 93,
                 width: 103,
               ),

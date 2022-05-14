@@ -9,6 +9,7 @@ class ShopController extends GetxController {
 
   RxList<Product> products = <Product>[].obs;
 
+  /// Gets a list of the products.
   void getAllProducts() async {
     List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = [];
     try {
