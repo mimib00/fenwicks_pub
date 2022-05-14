@@ -30,8 +30,10 @@ class Event {
 
   factory Event.fromJson(Map<String, dynamic> data, {String? uid}) {
     // List<Map<String, dynamic>> temp = data['going'];
-
-    // for (var user in temp) {}
+    // List<Users> users = [];
+    // for (var user in temp) {
+    //   users.add(Users.fromJson(user));
+    // }
 
     EventTypes tempType = EventTypes.concert;
 
@@ -61,7 +63,7 @@ class Event {
       id: uid,
     );
   }
-  toMap() => {
+  Map<String, dynamic> toMap() => {
         "name": name,
         "description": description,
         "date": date,

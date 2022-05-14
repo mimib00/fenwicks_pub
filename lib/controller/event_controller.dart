@@ -1,13 +1,36 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/model/event.dart';
+import 'package:fenwicks_pub/view/widget/event_card.dart';
 import 'package:get/get.dart';
 
+import '../view/constant/images.dart';
 import '../view/widget/error_card.dart';
 
 class EventController extends GetxController {
   final CollectionReference<Map<String, dynamic>> _ref = FirebaseFirestore.instance.collection("events");
 
   RxList<Event> events = <Event>[].obs;
+
+  final List<EventCard> eventCards = [
+    const EventCard(
+      icon: kConcertIcon,
+      title: 'Concert',
+      iconSize: 23.75,
+      type: EventTypes.concert,
+    ),
+    const EventCard(
+      icon: kDrinkingIcon,
+      title: 'Drinking',
+      iconSize: 26.31,
+      type: EventTypes.drinking,
+    ),
+    const EventCard(
+      icon: kMusicIcon,
+      title: 'Dancing',
+      iconSize: 23.48,
+      type: EventTypes.dancing,
+    ),
+  ];
 
   /// Gets list of the coming events.
   void getComingEvents() async {

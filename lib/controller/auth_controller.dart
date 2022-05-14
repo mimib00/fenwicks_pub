@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
-import 'package:fenwicks_pub/view/widgets/loading.dart';
+import 'package:fenwicks_pub/view/widget/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 

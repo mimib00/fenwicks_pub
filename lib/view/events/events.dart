@@ -82,32 +82,28 @@ class Events extends StatelessWidget {
                           weight: FontWeight.w700,
                           fontFamily: 'Poppins',
                         ),
-                        MyText(
-                          onTap: () {},
-                          text: 'View All',
-                          size: 11,
-                          weight: FontWeight.w400,
-                          fontFamily: 'Poppins',
-                        ),
                       ],
                     ),
                   ),
                   SizedBox(
                     height: 100,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                      ),
-                      itemCount: 0,
-                      itemBuilder: (context, index) {
-                        return Container();
-                        // var data = controller.getAllEventsCardsData[index];
-                        // return allEventsCards(data);
-                      },
+                    width: Get.width,
+                    child: Row(
+                      children: controller.eventCards,
                     ),
+                    // child: ListView.builder(
+                    //   scrollDirection: Axis.horizontal,
+                    //   shrinkWrap: true,
+                    //   physics: const BouncingScrollPhysics(),
+                    //   padding: const EdgeInsets.symmetric(
+                    //     horizontal: 7,
+                    //   ),
+                    //   itemCount: controller.eventCards.length,
+                    //   itemBuilder: (context, index) {
+                    //     var data = controller.eventCards[index];
+                    //     return data;
+                    //   },
+                    // ),
                   ),
                 ],
               ),
