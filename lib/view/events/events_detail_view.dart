@@ -1,8 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/controller/event_controller.dart';
 import 'package:fenwicks_pub/model/event.dart';
+import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/back_button.dart';
+import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/my_button.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +39,51 @@ class _EventsDetailViewState extends State<EventsDetailView> {
 
   List<String> get getEventsImages => eventsImages;
 
-  String buttonText = 'Mark Yourself As Going';
+  bool going = false;
+
+  Future<Users> getUserInfo(DocumentReference<Map<String, dynamic>> user) async {
+    Map<String, dynamic> data = {};
+    String id = "";
+    try {
+      final temp = await user.get();
+      data = temp.data()!;
+      id = temp.id;
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+
+    return Users.fromJson(data, uid: id);
+  }
+
+  List<Users> user = [];
+
+  @override
+  void initState() {
+    init();
+    super.initState();
+  }
+
+  void init() async {
+    final users = widget.event!.going;
+    final len = users.length > 5 ? 5 : users.length;
+    for (var i = 0; i < len; i++) {
+      final data = await getUserInfo(users[i]);
+      setState(() {
+        user.add(data);
+      });
+    }
+    isGoing();
+  }
+
+  void isGoing() {
+    final AuthController auth = Get.find();
+    final current = auth.user.value!;
+    if (user.isEmpty) return;
+    var me = user.where((element) => current.id == element.id).toList();
+    setState(() {
+      going = me.isNotEmpty;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +162,6 @@ class _EventsDetailViewState extends State<EventsDetailView> {
                     ),
                     Expanded(
                       child: ListView(
-                        shrinkWrap: true,
                         physics: const BouncingScrollPhysics(),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 30,
@@ -217,15 +265,6 @@ class _EventsDetailViewState extends State<EventsDetailView> {
                             ],
                           ),
                           MyText(
-                            text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
-                            size: 14,
-                            weight: FontWeight.w400,
-                            color: kWhiteColor.withOpacity(0.65),
-                            fontFamily: 'Poppins',
-                            height: 1.7,
-                            paddingTop: 20,
-                          ),
-                          MyText(
                             paddingTop: 20,
                             text: 'Interested People',
                             size: 25,
@@ -237,27 +276,41 @@ class _EventsDetailViewState extends State<EventsDetailView> {
                           ),
                           Stack(
                             children: List.generate(
-                              5,
+                              user.length,
                               (index) {
-                                var interestedPeoples = 'assets/images/d6.png';
                                 return Padding(
                                   padding: EdgeInsets.only(
-                                    left: index == 0
+                                    left: index == 4
                                         ? 150
-                                        : index == 1
+                                        : index == 3
                                             ? 115
                                             : index == 2
                                                 ? 75
-                                                : index == 3
+                                                : index == 4
                                                     ? 40
-                                                    : index == 4
+                                                    : index == 0
                                                         ? 0
                                                         : 0,
                                   ),
-                                  child: Image.asset(
-                                    interestedPeoples,
+                                  child: CachedNetworkImage(
+                                    imageUrl: user[index].photo,
+                                    errorWidget: (_, url, error) {
+                                      return const CircleAvatar(
+                                        child: Icon(
+                                          Icons.person_rounded,
+                                          color: Colors.black,
+                                          size: 30,
+                                        ),
+                                        backgroundColor: Colors.white,
+                                        radius: 25,
+                                      );
+                                    },
                                     height: 59,
                                   ),
+                                  // child: Image.asset(
+                                  //   interestedPeoples,
+                                  //   height: 59,
+                                  // ),
                                 );
                               },
                             ),
@@ -268,14 +321,25 @@ class _EventsDetailViewState extends State<EventsDetailView> {
                           CustomButton(
                             onPressed: () async {
                               final EventController controller = Get.find<EventController>();
-
-                              if (await controller.markAsGoing(widget.event!)) {
-                                setState(() {
-                                  buttonText = "See you soon :)";
-                                });
+                              final AuthController auth = Get.find();
+                              final current = auth.user.value!;
+                              if (!going) {
+                                if (await controller.markAsGoing(widget.event!)) {
+                                  setState(() {
+                                    going = true;
+                                    user.add(current);
+                                  });
+                                }
+                              } else {
+                                if (await controller.markAsNotGoing(widget.event!)) {
+                                  setState(() {
+                                    going = false;
+                                    user.removeWhere((element) => element.id == current.id);
+                                  });
+                                }
                               }
                             },
-                            text: buttonText,
+                            text: going ? "Mark Yourself As Not Going" : 'Mark Yourself As Going',
                           ),
                           const SizedBox(
                             height: 30,

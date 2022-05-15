@@ -5,6 +5,7 @@ class Users {
   final String name;
   final String email;
   final String phone;
+  final String photo;
   final List<AddressModel>? address;
   final int points;
 
@@ -12,7 +13,8 @@ class Users {
     this.name,
     this.email,
     this.phone,
-    this.points, {
+    this.points,
+    this.photo, {
     this.id,
     this.address,
   });
@@ -31,6 +33,7 @@ class Users {
       data["email"],
       data["phone"],
       data["points"] ?? 0,
+      data["photo"] ?? '',
       address: addresses,
       id: uid,
     );
@@ -42,5 +45,6 @@ class Users {
         "phone": phone,
         "address": address,
         "points": points,
+        "photo": photo,
       };
 }

@@ -71,6 +71,29 @@ class EventController extends GetxController {
     return true;
   }
 
+  /// Mark user as not going to that event.
+  Future<bool> markAsNotGoing(Event event) async {
+    final AuthController auth = Get.find<AuthController>();
+    try {
+      _ref.doc(event.id).set(
+        {
+          "going": FieldValue.arrayRemove(
+            [
+              FirebaseFirestore.instance.collection("users").doc(auth.user.value!.id)
+            ],
+          )
+        },
+        SetOptions(
+          merge: true,
+        ),
+      );
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+      return false;
+    }
+    return true;
+  }
+
   @override
   void dispose() {
     events.clear();

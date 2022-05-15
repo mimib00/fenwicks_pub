@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'users.dart';
 
 enum EventTypes { concert, drinking, dancing }
 
@@ -9,7 +8,7 @@ class Event {
   final String description;
   final Timestamp date;
   final int points;
-  final List<Users> going;
+  final List<DocumentReference<Map<String, dynamic>>> going;
   final String secret;
   final List<String> photos;
   final String address;
@@ -29,12 +28,6 @@ class Event {
   });
 
   factory Event.fromJson(Map<String, dynamic> data, {String? uid}) {
-    // List<Map<String, dynamic>> temp = data['going'];
-    // List<Users> users = [];
-    // for (var user in temp) {
-    //   users.add(Users.fromJson(user));
-    // }
-
     EventTypes tempType = EventTypes.concert;
 
     switch (data["type"]) {
@@ -55,7 +48,7 @@ class Event {
       data["description"],
       data["date"],
       data["points"],
-      <Users>[],
+      data['going'].cast<DocumentReference<Map<String, dynamic>>>(),
       data["secret"],
       data["photos"].cast<String>(),
       data["address"],
@@ -63,6 +56,7 @@ class Event {
       id: uid,
     );
   }
+
   Map<String, dynamic> toMap() => {
         "name": name,
         "description": description,
