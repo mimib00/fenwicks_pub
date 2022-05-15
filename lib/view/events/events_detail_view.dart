@@ -12,6 +12,7 @@ import 'package:fenwicks_pub/view/widget/my_button.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 // ignore: must_be_immutable
@@ -199,27 +200,14 @@ class _EventsDetailViewState extends State<EventsDetailView> {
                                         weight: FontWeight.w600,
                                         fontFamily: 'Poppins',
                                       ),
-                                      Wrap(
-                                        spacing: 2,
-                                        crossAxisAlignment: WrapCrossAlignment.end,
-                                        children: [
-                                          MyText(
-                                            text: '21',
-                                            size: 38,
-                                            weight: FontWeight.w700,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                          MyText(
-                                            paddingBottom: 10,
-                                            text: 'St',
-                                            size: 13,
-                                            weight: FontWeight.w200,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                        ],
+                                      MyText(
+                                        text: DateFormat.d().format(widget.event!.date.toDate()),
+                                        size: 38,
+                                        weight: FontWeight.w700,
+                                        fontFamily: 'Poppins',
                                       ),
                                       MyText(
-                                        text: 'May, 2022',
+                                        text: DateFormat.yMMM().format(widget.event!.date.toDate()),
                                         size: 13,
                                         weight: FontWeight.w300,
                                         fontFamily: 'Poppins',
