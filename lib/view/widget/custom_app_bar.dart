@@ -1,5 +1,7 @@
 import 'package:fenwicks_pub/view/constant/images.dart';
+import 'package:fenwicks_pub/view/qr_scaner.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'back_button.dart';
 import 'my_text.dart';
@@ -40,7 +42,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               )
             : IconButton(
-                onPressed: () {},
+                onPressed: () => Get.to(() => const QRScan()),
                 icon: Image.asset(
                   kQrIcon,
                   height: 20,
