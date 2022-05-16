@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/model/address.dart';
+import 'package:fenwicks_pub/model/event.dart';
 
 class Users {
   final String? id;
@@ -7,6 +9,7 @@ class Users {
   final String phone;
   final String photo;
   final List<AddressModel>? address;
+  final List<DocumentReference<Map<String, dynamic>>> history;
   final int points;
 
   Users(
@@ -14,7 +17,8 @@ class Users {
     this.email,
     this.phone,
     this.points,
-    this.photo, {
+    this.photo,
+    this.history, {
     this.id,
     this.address,
   });
@@ -34,6 +38,7 @@ class Users {
       data["phone"],
       data["points"] ?? 0,
       data["photo"] ?? '',
+      data["history"].cast<DocumentReference<Map<String, dynamic>>>() ?? [],
       address: addresses,
       id: uid,
     );
@@ -46,5 +51,6 @@ class Users {
         "address": address,
         "points": points,
         "photo": photo,
+        "history": history,
       };
 }

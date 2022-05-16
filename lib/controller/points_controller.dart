@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/model/event.dart';
+import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/loading.dart';
 import 'package:get/get.dart';
 
 class PointController extends GetxController {
   final CollectionReference<Map<String, dynamic>> _ref = FirebaseFirestore.instance.collection("events");
+  final AuthController auth = Get.find();
+  Users get current => auth.user.value!;
 
   Future<bool> validateQRCode(String code) async {
     Get.dialog(const LoadingCard(), barrierDismissible: false);
@@ -18,6 +21,8 @@ class PointController extends GetxController {
       if (event.date.toDate().millisecondsSinceEpoch < DateTime.now().millisecondsSinceEpoch) {
         throw "QR Code expiered!";
       }
+      if (await _claimCheck(event)) return false;
+
       _addPoints(event);
     } on FirebaseException catch (e) {
       Get.back();
@@ -28,10 +33,24 @@ class PointController extends GetxController {
     return true;
   }
 
+  Future<bool> _claimCheck(Event event) async {
+    try {
+      if (current.history.isEmpty) return false;
+      final item = current.history.where((element) => _ref.doc(event.id) == element).toList();
+      if (item.isNotEmpty) {
+        throw "Reward already claimed";
+      }
+    } catch (e) {
+      Get.back();
+      Get.showSnackbar(errorCard(e.toString()));
+      return true;
+    }
+    return false;
+  }
+
   void _addPoints(Event event) async {
-    final AuthController auth = Get.find();
     final CollectionReference<Map<String, dynamic>> ref = FirebaseFirestore.instance.collection("users");
-    final current = auth.user.value!;
+
     try {
       await ref.doc(current.id).set({
         "points": current.points + event.points
@@ -45,9 +64,8 @@ class PointController extends GetxController {
   }
 
   Future<void> _addToHistory(Event event) async {
-    final AuthController auth = Get.find();
     final CollectionReference<Map<String, dynamic>> ref = FirebaseFirestore.instance.collection("users");
-    final current = auth.user.value!;
+
     try {
       ref.doc(current.id).set({
         "history": FieldValue.arrayUnion([

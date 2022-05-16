@@ -42,11 +42,15 @@ class Events extends StatelessWidget {
               const SizedBox(
                 height: 30,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                ),
-                child: totalRewardPoints(20),
+              GetBuilder<AuthController>(
+                builder: (controller) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                    ),
+                    child: totalRewardPoints(controller.user.value!.points),
+                  );
+                },
               ),
               MyText(
                 paddingTop: 15,
