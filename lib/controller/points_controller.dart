@@ -36,7 +36,8 @@ class PointController extends GetxController {
   Future<bool> _claimCheck(Event event) async {
     try {
       if (current.history.isEmpty) return false;
-      final item = current.history.where((element) => _ref.doc(event.id) == element).toList();
+      final item = current.history.keys.where((element) => _ref.doc(event.id).toString() == element).toList();
+      // final item = current.history.where((element) => _ref.doc(event.id) == element[event]).toList();
       if (item.isNotEmpty) {
         throw "Reward already claimed";
       }
@@ -67,11 +68,13 @@ class PointController extends GetxController {
     final CollectionReference<Map<String, dynamic>> ref = FirebaseFirestore.instance.collection("users");
 
     try {
-      ref.doc(current.id).set({
-        "history": FieldValue.arrayUnion([
-          _ref.doc(event.id)
-        ])
-      }, SetOptions(merge: true));
+      final date = FieldValue.serverTimestamp();
+
+      ref.doc(current.id).update({
+        "history": {
+          _ref.doc(event.id).toString(): date
+        }
+      });
     } on FirebaseException catch (e) {
       Get.back();
       Get.showSnackbar(errorCard(e.message!));

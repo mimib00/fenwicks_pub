@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/model/address.dart';
-import 'package:fenwicks_pub/model/event.dart';
 
 class Users {
   final String? id;
@@ -9,7 +7,7 @@ class Users {
   final String phone;
   final String photo;
   final List<AddressModel>? address;
-  final List<DocumentReference<Map<String, dynamic>>> history;
+  final Map<String, dynamic> history;
   final int points;
 
   Users(
@@ -24,6 +22,8 @@ class Users {
   });
 
   factory Users.fromJson(Map<String, dynamic> data, {String? uid}) {
+    final map = data["history"] as Map<String, dynamic>;
+    print("HISTORY: ${map}");
     List<AddressModel> addresses = [];
     List? temp = data["address"];
     if (temp != null && temp.isNotEmpty) {
@@ -38,7 +38,7 @@ class Users {
       data["phone"],
       data["points"] ?? 0,
       data["photo"] ?? '',
-      data["history"].cast<DocumentReference<Map<String, dynamic>>>() ?? [],
+      map,
       address: addresses,
       id: uid,
     );
