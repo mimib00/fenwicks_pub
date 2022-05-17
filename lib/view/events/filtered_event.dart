@@ -20,7 +20,7 @@ class FilteredEvents extends StatefulWidget {
 }
 
 class _FilteredEventsState extends State<FilteredEvents> {
-  late List<Event> events = [];
+  late List<EventModel> events = [];
 
   final EventController controller = Get.find<EventController>();
 

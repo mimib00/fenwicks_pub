@@ -16,7 +16,7 @@ class PointController extends GetxController {
     try {
       final res = await _ref.where("secret", isEqualTo: code).get();
 
-      Event event = Event.fromJson(res.docs.first.data(), uid: res.docs.first.id);
+      EventModel event = EventModel.fromJson(res.docs.first.data(), uid: res.docs.first.id);
 
       if (event.date.toDate().millisecondsSinceEpoch < DateTime.now().millisecondsSinceEpoch) {
         Get.back();
@@ -34,7 +34,7 @@ class PointController extends GetxController {
     return true;
   }
 
-  Future<bool> _claimCheck(Event event) async {
+  Future<bool> _claimCheck(EventModel event) async {
     try {
       if (current.history.isEmpty) return false;
 
@@ -51,7 +51,7 @@ class PointController extends GetxController {
     return false;
   }
 
-  void _addPoints(Event event) async {
+  void _addPoints(EventModel event) async {
     final CollectionReference<Map<String, dynamic>> ref = FirebaseFirestore.instance.collection("users");
 
     try {
@@ -66,7 +66,7 @@ class PointController extends GetxController {
     }
   }
 
-  Future<void> _addToHistory(Event event) async {
+  Future<void> _addToHistory(EventModel event) async {
     final CollectionReference<Map<String, dynamic>> ref = FirebaseFirestore.instance.collection("users");
     final history = current.history;
 

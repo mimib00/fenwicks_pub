@@ -10,7 +10,7 @@ import '../view/widget/error_card.dart';
 class EventController extends GetxController {
   final CollectionReference<Map<String, dynamic>> _ref = FirebaseFirestore.instance.collection("events");
 
-  RxList<Event> events = <Event>[].obs;
+  RxList<EventModel> events = <EventModel>[].obs;
 
   final List<EventCard> eventCards = [
     const EventCard(
@@ -43,13 +43,13 @@ class EventController extends GetxController {
       Get.showSnackbar(errorCard(e.message!));
     }
     for (var doc in docs) {
-      events.add(Event.fromJson(doc.data(), uid: doc.id));
+      events.add(EventModel.fromJson(doc.data(), uid: doc.id));
     }
     update();
   }
 
   /// Mark user as going to that event.
-  Future<bool> markAsGoing(Event event) async {
+  Future<bool> markAsGoing(EventModel event) async {
     final AuthController auth = Get.find<AuthController>();
     try {
       _ref.doc(event.id).set(
@@ -72,7 +72,7 @@ class EventController extends GetxController {
   }
 
   /// Mark user as not going to that event.
-  Future<bool> markAsNotGoing(Event event) async {
+  Future<bool> markAsNotGoing(EventModel event) async {
     final AuthController auth = Get.find<AuthController>();
     try {
       _ref.doc(event.id).set(

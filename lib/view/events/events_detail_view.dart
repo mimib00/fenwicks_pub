@@ -17,7 +17,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 // ignore: must_be_immutable
 class EventsDetailView extends StatefulWidget {
-  final Event? event;
+  final EventModel? event;
   const EventsDetailView({
     Key? key,
     this.event,

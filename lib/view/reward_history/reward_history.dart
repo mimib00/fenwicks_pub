@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
+import 'package:fenwicks_pub/model/event.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/back_button.dart';
+import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:fenwicks_pub/view/widget/total_reward_points.dart';
 import 'package:flutter/foundation.dart';
@@ -27,94 +30,153 @@ class RewardHistory extends StatelessWidget {
           fontFamily: 'Poppins',
         ),
       ),
-      body: ListView(
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(
-          vertical: 20,
-        ),
+      body: GetBuilder<AuthController>(
+        builder: (controller) {
+          final user = controller.user.value!;
+
+          user.history.sort(
+            (a, b) {
+              if (a["date"] == null || b["date"] == null) return 0;
+              final first = a["date"] as Timestamp;
+              final second = b["date"] as Timestamp;
+
+              return first.compareTo(second);
+            },
+          );
+
+          final history = user.history;
+
+          if (history[0].isNotEmpty) {
+            history.insert(0, {});
+          }
+
+          print(history);
+          return Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                  ),
+                  child: totalRewardPoints(user.points),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return Container();
+                      }
+                      final date = history[index]["date"] as Timestamp;
+                      final doc = history[index]["event"] as DocumentReference<Map<String, dynamic>>;
+                      return RewardHistoryTiles(date: date.toDate(), doc: doc);
+                    },
+                    separatorBuilder: (context, index) {
+                      final previusDate = index == 0 ? history[index + 1]["date"] as Timestamp : history[index]["date"] as Timestamp;
+
+                      if (index == 0) return DateTile(date: previusDate.toDate());
+                      final date = history[index + 1]["date"] as Timestamp;
+                      if (date.toDate().month != previusDate.toDate().month) return DateTile(date: date.toDate());
+                      return Container();
+                    },
+                    itemCount: user.history.length,
+                  ),
+                ),
+                // ListView.builder(
+                //   shrinkWrap: true,
+                //   itemCount: 3,
+                //   physics: const ClampingScrollPhysics(),
+                //   itemBuilder: (context, index) {
+                //     return Padding(
+                //       padding: const EdgeInsets.only(
+                //         bottom: 15,
+                //       ),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.stretch,
+                //         children: [
+                //           Padding(
+                //             padding: const EdgeInsets.symmetric(
+                //               horizontal: 15,
+                //             ),
+                //             child: Row(
+                //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //               children: [
+                //                 MyText(
+                //                   text: 'December 2022',
+                //                   size: 18,
+                //                   weight: FontWeight.w500,
+                //                   fontFamily: 'Poppins',
+                //                 ),
+                //                 GestureDetector(
+                //                   onTap: () => Get.dialog(
+                //                     Column(
+                //                       mainAxisAlignment: MainAxisAlignment.center,
+                //                       children: [
+                //                         Card(
+                //                           margin: const EdgeInsets.symmetric(
+                //                             horizontal: 15,
+                //                           ),
+                //                           shape: RoundedRectangleBorder(
+                //                             borderRadius: BorderRadius.circular(16),
+                //                           ),
+                //                           child: const Padding(
+                //                             padding: EdgeInsets.all(15),
+                //                             child: CalendarPopUp(),
+                //                           ),
+                //                         ),
+                //                       ],
+                //                     ),
+                //                   ),
+                //                   child: Image.asset(
+                //                     kCalendarIcon2,
+                //                     height: 22.81,
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //           const SizedBox(
+                //             height: 20,
+                //           ),
+
+                //         ],
+                //       ),
+                //     );
+                //   },
+                // ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class DateTile extends StatelessWidget {
+  final DateTime date;
+  const DateTile({
+    Key? key,
+    required this.date,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final month = DateFormat.MMMM().format(date);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GetBuilder<AuthController>(
-            builder: (controller) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                ),
-                child: totalRewardPoints(controller.user.value!.points),
-              );
-            },
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: 3,
-            physics: const ClampingScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 15,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          MyText(
-                            text: 'December 2022',
-                            size: 18,
-                            weight: FontWeight.w500,
-                            fontFamily: 'Poppins',
-                          ),
-                          GestureDetector(
-                            onTap: () => Get.dialog(
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Card(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(15),
-                                      child: CalendarPopUp(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            child: Image.asset(
-                              kCalendarIcon2,
-                              height: 22.81,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: 3,
-                      physics: const ClampingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return const RewardHistoryTiles();
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
+          MyText(
+            text: "$month ${date.year}",
+            size: 18,
+            weight: FontWeight.w500,
+            fontFamily: 'Poppins',
           ),
         ],
       ),
@@ -123,76 +185,85 @@ class RewardHistory extends StatelessWidget {
 }
 
 class RewardHistoryTiles extends StatelessWidget {
+  final DateTime date;
+  final DocumentReference<Map<String, dynamic>> doc;
   const RewardHistoryTiles({
     Key? key,
+    required this.date,
+    required this.doc,
   }) : super(key: key);
+
+  Future<EventModel> getEvent() async {
+    DocumentSnapshot<Map<String, dynamic>>? snap;
+    try {
+      snap = await doc.get();
+    } on FirebaseException catch (e) {
+      Get.back();
+      Get.showSnackbar(errorCard(e.message!));
+    }
+
+    return EventModel.fromJson(snap!.data()!, uid: snap.id);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 15,
-        left: 15,
-        right: 15,
-      ),
-      child: ListTile(
-        minLeadingWidth: 25,
-        onTap: () {},
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 5,
-        ),
-        tileColor: kBlackColor,
-        leading: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              kCoin3,
-              height: 25.84,
+    return FutureBuilder<EventModel>(
+        future: getEvent(),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) return Container();
+
+          final event = snapshot.data!;
+          return Padding(
+            padding: const EdgeInsets.only(
+              bottom: 15,
+              left: 15,
+              right: 15,
             ),
-          ],
-        ),
-        title: MyText(
-          paddingBottom: 7,
-          text: 'Total Reward : 14 Points',
-          size: 17,
-          weight: FontWeight.w500,
-          fontFamily: 'Poppins',
-        ),
-        subtitle: MyText(
-          text: '14 points rewarded on going on event\n"Event name will come here"',
-          size: 11,
-          maxLines: 2,
-          overFlow: TextOverflow.ellipsis,
-          fontFamily: 'Poppins',
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            MyText(
-              text: 'TH',
-              size: 9,
-              weight: FontWeight.w500,
-              fontFamily: 'Poppins',
-              color: kSecondaryColor,
-              height: 0,
+            child: ListTile(
+              minLeadingWidth: 25,
+              onTap: () {},
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: 5,
+              ),
+              tileColor: kBlackColor,
+              leading: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    kCoin3,
+                    height: 25.84,
+                  ),
+                ],
+              ),
+              title: MyText(
+                paddingBottom: 7,
+                text: 'Total Reward : ${event.points} Points',
+                size: 17,
+                weight: FontWeight.w500,
+                fontFamily: 'Poppins',
+              ),
+              subtitle: MyText(
+                text: '${event.points} points rewarded on going on event\n"${event.name}"',
+                size: 11,
+                maxLines: 2,
+                overFlow: TextOverflow.ellipsis,
+                fontFamily: 'Poppins',
+              ),
+              trailing: MyText(
+                height: 1.1,
+                text: date.day.toString(),
+                size: 37,
+                color: kSecondaryColor,
+                weight: FontWeight.w900,
+                fontFamily: 'Poppins',
+              ),
             ),
-            MyText(
-              height: 1.1,
-              text: '14',
-              size: 37,
-              color: kSecondaryColor,
-              weight: FontWeight.w900,
-              fontFamily: 'Poppins',
-            ),
-          ],
-        ),
-      ),
-    );
+          );
+        });
   }
 }
 

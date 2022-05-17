@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum EventTypes { concert, drinking, dancing }
 
-class Event {
+class EventModel {
   final String? id;
   final String name;
   final String description;
@@ -14,7 +14,7 @@ class Event {
   final String address;
   final EventTypes type;
 
-  Event(
+  EventModel(
     this.name,
     this.description,
     this.date,
@@ -27,7 +27,7 @@ class Event {
     this.id,
   });
 
-  factory Event.fromJson(Map<String, dynamic> data, {String? uid}) {
+  factory EventModel.fromJson(Map<String, dynamic> data, {String? uid}) {
     EventTypes tempType = EventTypes.concert;
 
     switch (data["type"]) {
@@ -43,7 +43,7 @@ class Event {
       default:
     }
 
-    return Event(
+    return EventModel(
       data["name"],
       data["description"],
       data["date"],

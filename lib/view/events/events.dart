@@ -196,7 +196,7 @@ class Events extends StatelessWidget {
 }
 
 class RecentEventsWidget extends StatelessWidget {
-  final Event event;
+  final EventModel event;
   const RecentEventsWidget({
     Key? key,
     required this.event,
