@@ -1,3 +1,4 @@
+import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/back_button.dart';
@@ -5,8 +6,7 @@ import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:fenwicks_pub/view/widget/total_reward_points.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
-    show CalendarCarousel;
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -34,11 +34,15 @@ class RewardHistory extends StatelessWidget {
           vertical: 20,
         ),
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15,
-            ),
-            child: totalRewardPoints(114),
+          GetBuilder<AuthController>(
+            builder: (controller) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                ),
+                child: totalRewardPoints(controller.user.value!.points),
+              );
+            },
           ),
           const SizedBox(
             height: 30,
@@ -159,8 +163,7 @@ class RewardHistoryTiles extends StatelessWidget {
           fontFamily: 'Poppins',
         ),
         subtitle: MyText(
-          text:
-              '14 points rewarded on going on event\n"Event name will come here"',
+          text: '14 points rewarded on going on event\n"Event name will come here"',
           size: 11,
           maxLines: 2,
           overFlow: TextOverflow.ellipsis,
@@ -342,8 +345,7 @@ class _CalendarPopUpState extends State<CalendarPopUp> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      _targetDateTime = DateTime(
-                          _targetDateTime.year, _targetDateTime.month + 1);
+                      _targetDateTime = DateTime(_targetDateTime.year, _targetDateTime.month + 1);
                       _currentMonth = DateFormat.yMMM().format(_targetDateTime);
                     });
                   },

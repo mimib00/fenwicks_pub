@@ -7,7 +7,7 @@ class Users {
   final String phone;
   final String photo;
   final List<AddressModel>? address;
-  final Map<String, dynamic> history;
+  final List<Map<String, dynamic>> history;
   final int points;
 
   Users(
@@ -22,8 +22,12 @@ class Users {
   });
 
   factory Users.fromJson(Map<String, dynamic> data, {String? uid}) {
-    final map = data["history"] as Map<String, dynamic>;
-    print("HISTORY: ${map}");
+    // final map = data["history"] as Map<String, dynamic>;
+    // for (var element in map.keys) {
+    //   final test = element as DocumentReference<Map<String, dynamic>>;
+    //   print(test);
+    // }
+    // print("HISTORY: ${data["history"]}");
     List<AddressModel> addresses = [];
     List? temp = data["address"];
     if (temp != null && temp.isNotEmpty) {
@@ -38,7 +42,7 @@ class Users {
       data["phone"],
       data["points"] ?? 0,
       data["photo"] ?? '',
-      map,
+      data["history"] ?? [],
       address: addresses,
       id: uid,
     );
@@ -54,3 +58,8 @@ class Users {
         "history": history,
       };
 }
+
+
+// class History{
+//   final 
+// }

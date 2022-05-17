@@ -19,6 +19,7 @@ class PointController extends GetxController {
       Event event = Event.fromJson(res.docs.first.data(), uid: res.docs.first.id);
 
       if (event.date.toDate().millisecondsSinceEpoch < DateTime.now().millisecondsSinceEpoch) {
+        Get.back();
         throw "QR Code expiered!";
       }
       if (await _claimCheck(event)) return false;
@@ -36,9 +37,10 @@ class PointController extends GetxController {
   Future<bool> _claimCheck(Event event) async {
     try {
       if (current.history.isEmpty) return false;
-      final item = current.history.keys.where((element) => _ref.doc(event.id).toString() == element).toList();
-      // final item = current.history.where((element) => _ref.doc(event.id) == element[event]).toList();
+
+      final item = current.history.where((element) => _ref.doc(event.id) == element["event"]).toList();
       if (item.isNotEmpty) {
+        Get.back();
         throw "Reward already claimed";
       }
     } catch (e) {
@@ -66,14 +68,15 @@ class PointController extends GetxController {
 
   Future<void> _addToHistory(Event event) async {
     final CollectionReference<Map<String, dynamic>> ref = FirebaseFirestore.instance.collection("users");
+    final history = current.history;
 
     try {
-      final date = FieldValue.serverTimestamp();
-
+      history.add({
+        "date": Timestamp.now(),
+        "event": _ref.doc(event.id),
+      });
       ref.doc(current.id).update({
-        "history": {
-          _ref.doc(event.id).toString(): date
-        }
+        "history": history,
       });
     } on FirebaseException catch (e) {
       Get.back();
