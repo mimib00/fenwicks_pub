@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
+import 'package:fenwicks_pub/model/event.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
+import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:fenwicks_pub/view/widget/total_reward_points.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class Profile extends StatelessWidget {
   Profile({Key? key}) : super(key: key);
@@ -17,6 +21,18 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(builder: (controller) {
       final user = controller.user.value!;
+
+      user.history.sort(
+        (a, b) {
+          if (a["date"] == null || b["date"] == null) return 0;
+          final first = a["date"] as Timestamp;
+          final second = b["date"] as Timestamp;
+
+          return first.compareTo(second);
+        },
+      );
+
+      final history = user.history;
       return Scaffold(
         body: Stack(
           children: [
@@ -170,12 +186,14 @@ class Profile extends StatelessWidget {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
-                      itemCount: 15,
+                      itemCount: user.history.length,
                       padding: const EdgeInsets.symmetric(
                         vertical: 20,
                       ),
                       itemBuilder: (context, index) {
-                        return const PRewardHistoryTiles();
+                        final date = history[index]["date"] as Timestamp;
+                        final doc = history[index]["event"] as DocumentReference<Map<String, dynamic>>;
+                        return PRewardHistoryTiles(date: date.toDate(), doc: doc);
                       },
                     ),
                     const SizedBox(
@@ -244,77 +262,100 @@ class ProfileTiles extends StatelessWidget {
 }
 
 class PRewardHistoryTiles extends StatelessWidget {
+  final DateTime date;
+  final DocumentReference<Map<String, dynamic>> doc;
   const PRewardHistoryTiles({
     Key? key,
+    required this.date,
+    required this.doc,
   }) : super(key: key);
+
+  Future<EventModel> getEvent() async {
+    DocumentSnapshot<Map<String, dynamic>>? snap;
+    try {
+      snap = await doc.get();
+    } on FirebaseException catch (e) {
+      Get.back();
+      Get.showSnackbar(errorCard(e.message!));
+    }
+
+    return EventModel.fromJson(snap!.data()!, uid: snap.id);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 15,
-        left: 15,
-        right: 15,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: ListTile(
-          minLeadingWidth: 25,
-          onTap: () {},
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 15,
-            vertical: 5,
-          ),
-          tileColor: kBlackColor,
-          leading: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                kCoin3,
-                height: 25.84,
+    return FutureBuilder<EventModel>(
+        future: getEvent(),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) return Container();
+
+          final event = snapshot.data!;
+          return Padding(
+            padding: const EdgeInsets.only(
+              bottom: 15,
+              left: 15,
+              right: 15,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: ListTile(
+                minLeadingWidth: 25,
+                onTap: () {},
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 5,
+                ),
+                tileColor: kBlackColor,
+                leading: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      kCoin3,
+                      height: 25.84,
+                    ),
+                  ],
+                ),
+                title: MyText(
+                  paddingBottom: 7,
+                  text: 'Total Reward : ${event.points} Points',
+                  size: 17,
+                  weight: FontWeight.w500,
+                  fontFamily: 'Poppins',
+                ),
+                subtitle: MyText(
+                  text: '${event.points} points rewarded on going on event\n"${event.name}"',
+                  size: 11,
+                  maxLines: 2,
+                  overFlow: TextOverflow.ellipsis,
+                  fontFamily: 'Poppins',
+                ),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    MyText(
+                      height: 1.1,
+                      text: date.day.toString(),
+                      size: 37,
+                      color: kSecondaryColor,
+                      weight: FontWeight.w900,
+                      fontFamily: 'Poppins',
+                    ),
+                    MyText(
+                      text: DateFormat.yMMM().format(date),
+                      size: 9,
+                      color: kSecondaryColor,
+                      weight: FontWeight.w700,
+                      fontFamily: 'Poppins',
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-          title: MyText(
-            paddingBottom: 7,
-            text: 'Total Reward : 14 Points',
-            size: 17,
-            weight: FontWeight.w500,
-            fontFamily: 'Poppins',
-          ),
-          subtitle: MyText(
-            text: '14 points rewarded on going on event\n"Event name will come here"',
-            size: 11,
-            maxLines: 2,
-            overFlow: TextOverflow.ellipsis,
-            fontFamily: 'Poppins',
-          ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              MyText(
-                height: 1.1,
-                text: '14',
-                size: 37,
-                color: kSecondaryColor,
-                weight: FontWeight.w900,
-                fontFamily: 'Poppins',
-              ),
-              MyText(
-                text: 'May, 2022',
-                size: 9,
-                color: kSecondaryColor,
-                weight: FontWeight.w700,
-                fontFamily: 'Poppins',
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
+        });
   }
 }
