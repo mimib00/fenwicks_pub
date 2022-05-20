@@ -81,71 +81,9 @@ class RewardHistory extends StatelessWidget {
                       if (date.toDate().month != previusDate.toDate().month) return DateTile(date: date.toDate());
                       return Container();
                     },
-                    itemCount: user.history.length,
+                    itemCount: history.length,
                   ),
                 ),
-                // ListView.builder(
-                //   shrinkWrap: true,
-                //   itemCount: 3,
-                //   physics: const ClampingScrollPhysics(),
-                //   itemBuilder: (context, index) {
-                //     return Padding(
-                //       padding: const EdgeInsets.only(
-                //         bottom: 15,
-                //       ),
-                //       child: Column(
-                //         crossAxisAlignment: CrossAxisAlignment.stretch,
-                //         children: [
-                //           Padding(
-                //             padding: const EdgeInsets.symmetric(
-                //               horizontal: 15,
-                //             ),
-                //             child: Row(
-                //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //               children: [
-                //                 MyText(
-                //                   text: 'December 2022',
-                //                   size: 18,
-                //                   weight: FontWeight.w500,
-                //                   fontFamily: 'Poppins',
-                //                 ),
-                //                 GestureDetector(
-                //                   onTap: () => Get.dialog(
-                //                     Column(
-                //                       mainAxisAlignment: MainAxisAlignment.center,
-                //                       children: [
-                //                         Card(
-                //                           margin: const EdgeInsets.symmetric(
-                //                             horizontal: 15,
-                //                           ),
-                //                           shape: RoundedRectangleBorder(
-                //                             borderRadius: BorderRadius.circular(16),
-                //                           ),
-                //                           child: const Padding(
-                //                             padding: EdgeInsets.all(15),
-                //                             child: CalendarPopUp(),
-                //                           ),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                   ),
-                //                   child: Image.asset(
-                //                     kCalendarIcon2,
-                //                     height: 22.81,
-                //                   ),
-                //                 ),
-                //               ],
-                //             ),
-                //           ),
-                //           const SizedBox(
-                //             height: 20,
-                //           ),
-
-                //         ],
-                //       ),
-                //     );
-                //   },
-                // ),
               ],
             ),
           );

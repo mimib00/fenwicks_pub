@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/model/event.dart';
+import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
@@ -167,9 +168,12 @@ class Profile extends StatelessWidget {
                             size: 16,
                             weight: FontWeight.w700,
                           ),
-                          MyText(
-                            text: 'View All',
-                            size: 11,
+                          GestureDetector(
+                            onTap: () => Get.toNamed(AppLinks.rewardHistory),
+                            child: MyText(
+                              text: 'View All',
+                              size: 11,
+                            ),
                           ),
                         ],
                       ),
@@ -186,7 +190,7 @@ class Profile extends StatelessWidget {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
-                      itemCount: user.history.length,
+                      itemCount: history.length > 5 ? 5 : history.length,
                       padding: const EdgeInsets.symmetric(
                         vertical: 20,
                       ),
