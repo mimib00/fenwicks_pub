@@ -56,9 +56,27 @@ class AuthController extends GetxController {
   void updateUserData(Map<String, dynamic> data) async {
     try {
       await _ref.doc(user.value!.id!).set(data, SetOptions(merge: true));
+      await getUserData(user.value!.id!);
     } on FirebaseException catch (e) {
+      Get.back();
       Get.showSnackbar(errorCard(e.message!));
     }
+    Get.back();
+  }
+
+  /// Update user email.
+  void updateEmail(String email, String password) async {
+    User currentUser = FirebaseAuth.instance.currentUser!;
+    try {
+      AuthCredential authCredential = EmailAuthProvider.credential(email: currentUser.email!, password: password);
+      UserCredential credential = await currentUser.reauthenticateWithCredential(authCredential);
+
+      await credential.user!.updateEmail(email);
+    } on FirebaseException catch (e) {
+      Get.back();
+      Get.showSnackbar(errorCard(e.message!));
+    }
+    Get.back();
   }
 
   /// fetch user data from firestore and cast it to a [Users] object.
@@ -107,7 +125,6 @@ class AuthController extends GetxController {
         };
 
         updateUserData(data);
-        await getUserData(current.id!);
       }
     } on FirebaseException catch (e) {
       Get.back();

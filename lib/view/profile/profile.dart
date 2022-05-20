@@ -6,7 +6,9 @@ import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
+import 'package:fenwicks_pub/view/widget/my_button.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
+import 'package:fenwicks_pub/view/widget/my_text_field.dart';
 import 'package:fenwicks_pub/view/widget/total_reward_points.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -135,7 +137,6 @@ class Profile extends StatelessWidget {
                   ),
                 ),
                 child: ListView(
-                  shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.symmetric(
                     vertical: 20,
@@ -144,18 +145,30 @@ class Profile extends StatelessWidget {
                     const SizedBox(
                       height: 80,
                     ),
+
                     ProfileTiles(
-                      leading: 'Name',
-                      trailing: user.name,
+                      title: 'Name',
+                      field: "name",
+                      value: user.name,
                     ),
                     ProfileTiles(
-                      leading: 'Email',
-                      trailing: user.email,
+                      title: 'Email',
+                      field: "email",
+                      value: user.email,
                     ),
-                    ProfileTiles(
-                      leading: 'Password',
-                      trailing: '*********',
-                    ),
+                    // ProfileTiles(
+                    //   controller: tabController,
+                    //   title: 'Password',
+                    //   value: '*********',
+                    //   onTap: () {
+                    //     tabController.animateTo(1);
+                    //     setState(() {
+                    //       _title = "Change Password";
+                    //       _label = "New Password";
+                    //       _field = "password";
+                    //     });
+                    //   },
+                    // ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 15,
@@ -214,52 +227,117 @@ class Profile extends StatelessWidget {
   }
 }
 
+// class InfoEditor extends StatelessWidget {
+//   InfoEditor({
+//     Key? key,
+//   }) : super(key: key);
+
+//   final TextEditingController controller = TextEditingController();
+//   final TextEditingController controller2 = TextEditingController();
+//   final TextEditingController password = TextEditingController();
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container();
+//   }
+// }
+
 // ignore: must_be_immutable
 class ProfileTiles extends StatelessWidget {
+  final String title;
+  final String value;
+  final String field;
+
   ProfileTiles({
     Key? key,
-    this.leading,
-    this.trailing,
+    required this.title,
+    required this.value,
+    required this.field,
   }) : super(key: key);
-  String? leading, trailing;
+
+  final TextEditingController controller = TextEditingController();
+  final TextEditingController password = TextEditingController();
+
+  final AuthController auth = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 20,
-        left: 15,
-        right: 15,
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return GestureDetector(
+      onTap: () {
+        Get.defaultDialog(
+          title: "Update $title",
+          content: Column(
             children: [
-              MyText(
-                text: '$leading',
-                size: 11,
-                fontFamily: 'Poppins',
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  hintText: title,
+                ),
               ),
-              MyText(
-                text: '$trailing',
-                size: 16,
-                weight: FontWeight.w600,
-                fontFamily: 'Poppins',
+              Visibility(
+                visible: field == "email",
+                child: TextField(
+                  controller: password,
+                  decoration: const InputDecoration(
+                    hintText: "Current Password",
+                  ),
+                  obscureText: true,
+                ),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  if (controller.text.trim().isEmpty) return;
+                  if (controller.text.trim().isEmail && password.text.trim().isNotEmpty) {
+                    // update email
+                    auth.updateEmail(controller.text.trim(), password.text.trim());
+                  }
+                  Map<String, dynamic> data = {
+                    field: controller.text.trim()
+                  };
+                  auth.updateUserData(data);
+                },
+                child: const Text("Update"),
+              )
             ],
           ),
-          Container(
-            margin: const EdgeInsets.only(
-              top: 15,
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(
+          bottom: 20,
+          left: 15,
+          right: 15,
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                MyText(
+                  text: title,
+                  size: 11,
+                  fontFamily: 'Poppins',
+                ),
+                MyText(
+                  text: value,
+                  size: 16,
+                  weight: FontWeight.w600,
+                  fontFamily: 'Poppins',
+                ),
+              ],
             ),
-            height: 2,
-            decoration: BoxDecoration(
-              color: kWhiteColor.withOpacity(0.42),
-              borderRadius: BorderRadius.circular(50),
+            Container(
+              margin: const EdgeInsets.only(
+                top: 15,
+              ),
+              height: 2,
+              decoration: BoxDecoration(
+                color: kWhiteColor.withOpacity(0.42),
+                borderRadius: BorderRadius.circular(50),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

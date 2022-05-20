@@ -282,25 +282,24 @@ class _EventsDetailViewState extends State<EventsDetailView> {
                                                           ? 0
                                                           : 0,
                                     ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: user[index].photo,
-                                      errorWidget: (_, url, error) {
-                                        return const CircleAvatar(
-                                          child: Icon(
-                                            Icons.person_rounded,
-                                            color: Colors.black,
-                                            size: 30,
-                                          ),
-                                          backgroundColor: Colors.white,
-                                          radius: 25,
-                                        );
-                                      },
-                                      height: 59,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(360),
+                                      child: CachedNetworkImage(
+                                        imageUrl: user[index].photo,
+                                        errorWidget: (_, url, error) {
+                                          return const CircleAvatar(
+                                            child: Icon(
+                                              Icons.person_rounded,
+                                              color: Colors.black,
+                                              size: 30,
+                                            ),
+                                            backgroundColor: Colors.white,
+                                            radius: 25,
+                                          );
+                                        },
+                                        height: 59,
+                                      ),
                                     ),
-                                    // child: Image.asset(
-                                    //   interestedPeoples,
-                                    //   height: 59,
-                                    // ),
                                   );
                                 },
                               ),
