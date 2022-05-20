@@ -262,45 +262,48 @@ class _EventsDetailViewState extends State<EventsDetailView> {
                           const SizedBox(
                             height: 15,
                           ),
-                          Stack(
-                            children: List.generate(
-                              user.length,
-                              (index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    left: index == 4
-                                        ? 150
-                                        : index == 3
-                                            ? 115
-                                            : index == 2
-                                                ? 75
-                                                : index == 4
-                                                    ? 40
-                                                    : index == 0
-                                                        ? 0
-                                                        : 0,
-                                  ),
-                                  child: CachedNetworkImage(
-                                    imageUrl: user[index].photo,
-                                    errorWidget: (_, url, error) {
-                                      return const CircleAvatar(
-                                        child: Icon(
-                                          Icons.person_rounded,
-                                          color: Colors.black,
-                                          size: 30,
-                                        ),
-                                        backgroundColor: Colors.white,
-                                        radius: 25,
-                                      );
-                                    },
-                                    height: 59,
-                                  ),
-                                  // child: Image.asset(
-                                  //   interestedPeoples,
-                                  //   height: 59,
-                                  // ),
-                                );
-                              },
+                          Visibility(
+                            visible: user.isNotEmpty,
+                            child: Stack(
+                              children: List.generate(
+                                user.length,
+                                (index) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                      left: index == 4
+                                          ? 150
+                                          : index == 3
+                                              ? 115
+                                              : index == 2
+                                                  ? 75
+                                                  : index == 4
+                                                      ? 40
+                                                      : index == 0
+                                                          ? 0
+                                                          : 0,
+                                    ),
+                                    child: CachedNetworkImage(
+                                      imageUrl: user[index].photo,
+                                      errorWidget: (_, url, error) {
+                                        return const CircleAvatar(
+                                          child: Icon(
+                                            Icons.person_rounded,
+                                            color: Colors.black,
+                                            size: 30,
+                                          ),
+                                          backgroundColor: Colors.white,
+                                          radius: 25,
+                                        );
+                                      },
+                                      height: 59,
+                                    ),
+                                    // child: Image.asset(
+                                    //   interestedPeoples,
+                                    //   height: 59,
+                                    // ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                           const SizedBox(

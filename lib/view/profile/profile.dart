@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
@@ -5,9 +6,12 @@ import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:fenwicks_pub/view/widget/total_reward_points.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Profile extends StatelessWidget {
-  const Profile({Key? key}) : super(key: key);
+  Profile({Key? key}) : super(key: key);
+
+  final ImagePicker _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -67,23 +71,27 @@ class Profile extends StatelessWidget {
                   const SizedBox(
                     height: 15,
                   ),
-                  Container(
-                    height: 93,
-                    width: 93,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: kBlackColor.withOpacity(0.16),
-                          offset: const Offset(0, 3),
-                          blurRadius: 6,
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(100),
-                      image: const DecorationImage(
-                        image: AssetImage(
-                          kDummyUser,
-                        ),
+                  GestureDetector(
+                    onTap: () async {
+                      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                      if (image == null) return;
+                      controller.updateUserPhoto(image);
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(360),
+                      child: CachedNetworkImage(
+                        imageUrl: user.photo,
                         fit: BoxFit.cover,
+                        height: 150,
+                        width: 150,
+                        errorWidget: (_, __, ___) => const CircleAvatar(
+                          radius: 60,
+                          child: Icon(
+                            Icons.person_rounded,
+                            size: 60,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -98,7 +106,7 @@ class Profile extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 270,
+              top: 280,
               child: Container(
                 height: Get.height,
                 width: Get.width,

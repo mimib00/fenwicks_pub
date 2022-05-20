@@ -50,7 +50,6 @@ class RewardHistory extends StatelessWidget {
             history.insert(0, {});
           }
 
-          print(history);
           return Padding(
             padding: const EdgeInsets.only(top: 20),
             child: Column(

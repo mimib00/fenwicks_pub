@@ -73,7 +73,7 @@ class AppRoutes {
     ),
     GetPage(
       name: AppLinks.profile,
-      page: () => const Profile(),
+      page: () => Profile(),
     ),
     GetPage(
       name: AppLinks.discoverProfile,

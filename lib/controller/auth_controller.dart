@@ -1,14 +1,19 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../routes/routes.dart';
 
 class AuthController extends GetxController {
   final _ref = FirebaseFirestore.instance.collection("users");
+  final storageRef = FirebaseStorage.instance.ref();
 
   Rx<Users?> user = Rx<Users?>(null);
 
@@ -47,6 +52,15 @@ class AuthController extends GetxController {
     Get.showSnackbar(messageCard("Check email and verify email"));
   }
 
+  /// Update user data in user's firestore collection call users
+  void updateUserData(Map<String, dynamic> data) async {
+    try {
+      await _ref.doc(user.value!.id!).set(data, SetOptions(merge: true));
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+  }
+
   /// fetch user data from firestore and cast it to a [Users] object.
   Future<void> getUserData(String id) async {
     DocumentSnapshot<Map<String, dynamic>>? doc;
@@ -74,6 +88,32 @@ class AuthController extends GetxController {
       FirebaseAuth.instance.signOut();
       return false;
     }
+  }
+
+  /// Takes the image user select and upload it to firebase storage
+  ///
+  /// Then it refrence it in user document if firestore.
+  void updateUserPhoto(XFile image) async {
+    var current = user.value!;
+    var path = "profile_pictures/${current.id!}";
+    Get.dialog(const LoadingCard(), barrierDismissible: false);
+    try {
+      TaskSnapshot snapshot = await storageRef.child(path).putFile(File(image.path));
+      if (snapshot.state == TaskState.error || snapshot.state == TaskState.canceled) throw "There was an error durring upload";
+      if (snapshot.state == TaskState.success) {
+        var imageUrl = await snapshot.ref.getDownloadURL();
+        Map<String, dynamic> data = {
+          "photo": imageUrl
+        };
+
+        updateUserData(data);
+        await getUserData(current.id!);
+      }
+    } on FirebaseException catch (e) {
+      Get.back();
+      Get.showSnackbar(errorCard(e.message!));
+    }
+    Get.back();
   }
 
   @override
