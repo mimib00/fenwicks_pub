@@ -7,7 +7,6 @@ import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/drawer/my_drawer.dart';
 import 'package:fenwicks_pub/view/events/events_detail_view.dart';
 import 'package:fenwicks_pub/view/widget/bear_glass_widget.dart';
-import 'package:fenwicks_pub/view/widget/horizontal_calendar.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:fenwicks_pub/view/widget/total_reward_points.dart';
 import 'package:flutter/material.dart';
@@ -78,7 +77,7 @@ class Events extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              const HorizontalCalendar(),
+              // const HorizontalCalendar(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -365,7 +364,6 @@ class ProfileTile extends StatelessWidget {
                   height: 60,
                   width: 50,
                   errorWidget: (_, __, ___) => const CircleAvatar(
-                    // radius: 40,
                     backgroundColor: kPrimaryColor,
                     child: Icon(
                       Icons.person_rounded,

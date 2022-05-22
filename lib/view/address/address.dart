@@ -1,8 +1,11 @@
+import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/custom_app_bar.dart';
+import 'package:fenwicks_pub/view/widget/my_button.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
+import 'package:fenwicks_pub/view/widget/my_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,22 +23,26 @@ class Address extends StatelessWidget {
       appBar: OrderAppBar(
         title: 'Address',
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 20,
-        ),
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        children: [
-          AddressCards(
-            address: '19th ave, Hamilton Cicrle,\nNewyork, Newyork',
-          ),
-          AddressCards(
-            isBusiness: true,
-            address: '19th ave, Hamilton Cicrle,\nNewyork, Newyork',
-          ),
-        ],
+      body: GetBuilder<AuthController>(
+        builder: (controller) {
+          final user = controller.user.value!;
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 15,
+              vertical: 20,
+            ),
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
+            itemCount: user.address.length,
+            itemBuilder: (context, index) {
+              final address = user.address[index];
+              return AddressCards(
+                isBusiness: address["address_type"] == "Work",
+                address: address["address"],
+              );
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: kSecondaryColor,
@@ -43,22 +50,20 @@ class Address extends StatelessWidget {
           kAddIcon,
           height: 18,
         ),
-        onPressed: () {},
+        onPressed: () => Get.to(() => const AddressScreen()),
       ),
     );
   }
 }
 
-// ignore: must_be_immutable
 class AddressCards extends StatelessWidget {
-  AddressCards({
+  final dynamic address;
+  final bool? isBusiness;
+  const AddressCards({
     Key? key,
-    this.address,
+    required this.address,
     this.isBusiness = false,
   }) : super(key: key);
-
-  String? address;
-  bool? isBusiness;
 
   @override
   Widget build(BuildContext context) {
@@ -83,12 +88,8 @@ class AddressCards extends StatelessWidget {
         child: InkWell(
           onTap: () => Get.toNamed(AppLinks.payment),
           borderRadius: BorderRadius.circular(21),
-          splashColor: isBusiness == true
-              ? kBlackColor.withOpacity(0.1)
-              : kWhiteColor.withOpacity(0.1),
-          highlightColor: isBusiness == true
-              ? kBlackColor.withOpacity(0.1)
-              : kWhiteColor.withOpacity(0.1),
+          splashColor: isBusiness == true ? kBlackColor.withOpacity(0.1) : kWhiteColor.withOpacity(0.1),
+          highlightColor: isBusiness == true ? kBlackColor.withOpacity(0.1) : kWhiteColor.withOpacity(0.1),
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 15,
@@ -111,8 +112,7 @@ class AddressCards extends StatelessWidget {
                             paddingLeft: 6,
                             text: isBusiness == true ? 'Work' : 'Home',
                             size: 16,
-                            color:
-                                isBusiness == true ? kBlackColor : kWhiteColor,
+                            color: isBusiness == true ? kBlackColor : kWhiteColor,
                             weight: FontWeight.w700,
                           ),
                         ],
@@ -122,9 +122,7 @@ class AddressCards extends StatelessWidget {
                         text: '$address',
                         size: 12,
                         weight: FontWeight.w400,
-                        color: isBusiness == true
-                            ? kBlackColor.withOpacity(0.46)
-                            : kWhiteColor,
+                        color: isBusiness == true ? kBlackColor.withOpacity(0.46) : kWhiteColor,
                         fontFamily: 'Poppins',
                       ),
                     ],
@@ -275,6 +273,95 @@ class BagTiles extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class AddressScreen extends StatefulWidget {
+  const AddressScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AddressScreen> createState() => _AddressScreenState();
+}
+
+class _AddressScreenState extends State<AddressScreen> {
+  String dropValue = "Home";
+
+  final TextEditingController address = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: OrderAppBar(
+        title: 'Add Address',
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              color: Colors.white,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MyText(
+                    text: "Address type: ",
+                    color: Colors.black,
+                  ),
+                  const SizedBox(width: 5),
+                  DropdownButton<String>(
+                    value: dropValue,
+                    underline: const SizedBox.shrink(),
+                    items: const [
+                      DropdownMenuItem(
+                        value: "Home",
+                        child: Text(
+                          "Home",
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: "Work",
+                        child: Text(
+                          "Work",
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() {
+                        dropValue = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            MyTextField(
+              hintText: 'Address',
+              paddingBottom: 30.0,
+              keyboardType: TextInputType.streetAddress,
+              controller: address,
+            ),
+            MyButton(
+              text: "Add Address",
+              onTap: () {
+                final AuthController auth = Get.find();
+                if (address.text.isEmpty) return;
+
+                Map<String, dynamic> data = {
+                  "address_type": dropValue,
+                  "address": address.text.trim(),
+                };
+
+                auth.addAddress(data);
+              },
+            )
+          ],
+        ),
+      ),
     );
   }
 }

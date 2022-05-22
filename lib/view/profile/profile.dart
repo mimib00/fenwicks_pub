@@ -227,22 +227,6 @@ class Profile extends StatelessWidget {
   }
 }
 
-// class InfoEditor extends StatelessWidget {
-//   InfoEditor({
-//     Key? key,
-//   }) : super(key: key);
-
-//   final TextEditingController controller = TextEditingController();
-//   final TextEditingController controller2 = TextEditingController();
-//   final TextEditingController password = TextEditingController();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }
-
-// ignore: must_be_immutable
 class ProfileTiles extends StatelessWidget {
   final String title;
   final String value;

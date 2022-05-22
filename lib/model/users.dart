@@ -1,12 +1,10 @@
-import 'package:fenwicks_pub/model/address.dart';
-
 class Users {
   final String? id;
   final String name;
   final String email;
   final String phone;
   final String photo;
-  final List<AddressModel>? address;
+  final List<Map<String, dynamic>> address;
   final List<Map<String, dynamic>> history;
   final int points;
 
@@ -18,19 +16,13 @@ class Users {
     this.photo,
     this.history, {
     this.id,
-    this.address,
+    this.address = const [],
   });
 
   factory Users.fromJson(Map<String, dynamic> data, {String? uid}) {
     final map = data["history"] == null ? <Map<String, dynamic>>[] : data["history"].cast<Map<String, dynamic>>();
 
-    List<AddressModel> addresses = [];
-    List? temp = data["address"];
-    if (temp != null && temp.isNotEmpty) {
-      for (var item in temp) {
-        addresses.add(AddressModel.fromJson(item));
-      }
-    }
+    List<Map<String, dynamic>> addresses = data["address"].cast<Map<String, dynamic>>();
 
     return Users(
       data["name"],

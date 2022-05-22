@@ -77,6 +77,22 @@ class AuthController extends GetxController {
       Get.back();
       Get.showSnackbar(errorCard(e.message!));
     }
+    logout();
+    Get.back();
+  }
+
+  void addAddress(Map<String, dynamic> address) async {
+    final addr = user.value!.address;
+    try {
+      addr.add(address);
+      await _ref.doc(user.value!.id!).update({
+        "address": addr,
+      });
+      await getUserData(user.value!.id!);
+    } on FirebaseException catch (e) {
+      Get.back();
+      Get.showSnackbar(errorCard(e.message!));
+    }
     Get.back();
   }
 
