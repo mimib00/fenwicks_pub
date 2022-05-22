@@ -22,7 +22,7 @@ class Users {
   });
 
   factory Users.fromJson(Map<String, dynamic> data, {String? uid}) {
-    final map = data["history"].cast<Map<String, dynamic>>();
+    final map = data["history"] == null ? <Map<String, dynamic>>[] : data["history"].cast<Map<String, dynamic>>();
 
     List<AddressModel> addresses = [];
     List? temp = data["address"];
@@ -54,8 +54,3 @@ class Users {
         "history": history,
       };
 }
-
-
-// class History{
-//   final 
-// }

@@ -94,8 +94,6 @@ class AppLinks {
   static const splashScreen = '/splash_screen';
   static const getStarted = '/get_started';
   static const auth = '/auth';
-  // static const login = '/login';
-  // static const signUp = '/sign_up';
   static const events = '/events';
   static const eventsDetailView = '/events_detail_view';
   static const topSaleAndFutureProducts = '/top_sale_and_future_products';

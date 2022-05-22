@@ -72,6 +72,7 @@ class AuthController extends GetxController {
       UserCredential credential = await currentUser.reauthenticateWithCredential(authCredential);
 
       await credential.user!.updateEmail(email);
+      credential.user!.sendEmailVerification();
     } on FirebaseException catch (e) {
       Get.back();
       Get.showSnackbar(errorCard(e.message!));
@@ -103,6 +104,7 @@ class AuthController extends GetxController {
     if (user.emailVerified) {
       return true;
     } else {
+      user.sendEmailVerification();
       FirebaseAuth.instance.signOut();
       return false;
     }

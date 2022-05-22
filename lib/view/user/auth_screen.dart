@@ -26,7 +26,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       body: TabBarView(
         physics: const NeverScrollableScrollPhysics(),
         controller: controller,
