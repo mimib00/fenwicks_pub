@@ -104,9 +104,11 @@ class Profile extends StatelessWidget {
                         width: 150,
                         errorWidget: (_, __, ___) => const CircleAvatar(
                           radius: 60,
+                          backgroundColor: kPrimaryColor,
                           child: Icon(
                             Icons.person_rounded,
                             size: 60,
+                            color: Colors.white,
                           ),
                         ),
                       ),

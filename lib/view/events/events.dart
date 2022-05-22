@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fenwicks_pub/controller/shop_controller.dart';
 import 'package:fenwicks_pub/model/event.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
@@ -44,21 +45,28 @@ class Events extends StatelessWidget {
               ),
               GetBuilder<AuthController>(
                 builder: (controller) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                    ),
-                    child: totalRewardPoints(controller.user.value!.points),
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                        ),
+                        child: totalRewardPoints(controller.user.value!.points),
+                      ),
+                      Visibility(
+                        visible: controller.user.value!.points > 0,
+                        child: MyText(
+                          paddingTop: 15,
+                          text: 'Spend your points now!',
+                          align: TextAlign.center,
+                          weight: FontWeight.w300,
+                          fontFamily: 'Poppins',
+                          paddingBottom: 20,
+                        ),
+                      ),
+                    ],
                   );
                 },
-              ),
-              MyText(
-                paddingTop: 15,
-                text: 'Spend your points now!',
-                align: TextAlign.center,
-                weight: FontWeight.w300,
-                fontFamily: 'Poppins',
-                paddingBottom: 20,
               ),
               Center(
                 child: Container(
@@ -350,10 +358,21 @@ class ProfileTile extends StatelessWidget {
             ),
             child: Flexible(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: Image.asset(
-                  kDummyUser,
+                borderRadius: BorderRadius.circular(360),
+                child: CachedNetworkImage(
+                  imageUrl: user.photo,
                   fit: BoxFit.cover,
+                  height: 60,
+                  width: 50,
+                  errorWidget: (_, __, ___) => const CircleAvatar(
+                    // radius: 40,
+                    backgroundColor: kPrimaryColor,
+                    child: Icon(
+                      Icons.person_rounded,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ),

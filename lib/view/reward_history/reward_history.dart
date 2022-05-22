@@ -33,6 +33,7 @@ class RewardHistory extends StatelessWidget {
       body: GetBuilder<AuthController>(
         builder: (controller) {
           final user = controller.user.value!;
+          if (user.history.isEmpty) return Container();
 
           user.history.sort(
             (a, b) {
