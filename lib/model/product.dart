@@ -31,4 +31,6 @@ class Product {
       data["quantity"],
     );
   }
+
+  Map<String, dynamic> toMap() => {};
 }

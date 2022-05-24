@@ -1,4 +1,5 @@
 import 'package:fenwicks_pub/controller/payment_controller/payment_controller.dart';
+import 'package:fenwicks_pub/controller/shop_controller.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
@@ -14,8 +15,8 @@ class Payment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<PaymentController>(
-      init: PaymentController(),
+    return GetBuilder<ShopController>(
+      init: ShopController(),
       builder: (controller) {
         return Scaffold(
           appBar: OrderAppBar(
@@ -30,115 +31,43 @@ class Payment extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             children: [
               MyText(
-                text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod ',
+                text: 'Select a payment method to pay for the expances of the drinks',
                 size: 15,
                 weight: FontWeight.w400,
                 color: kWhiteColor.withOpacity(0.65),
                 fontFamily: 'Poppins',
                 paddingBottom: 30,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  MyText(
-                    text: 'Payment Method',
-                    size: 18,
-                    weight: FontWeight.w700,
-                    fontFamily: 'Poppins',
-                  ),
-                  Image.asset(
-                    kEditIcon,
-                    height: 11.93,
-                  ),
-                ],
+              MyText(
+                text: 'Payment Method',
+                size: 18,
+                weight: FontWeight.w700,
+                fontFamily: 'Poppins',
               ),
               const SizedBox(
                 height: 30,
               ),
-              GestureDetector(
-                onTap: () => controller.selectedMethod(
-                  controller.isDebitCard,
-                  0,
+              Theme(
+                data: Theme.of(context).copyWith(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  unselectedWidgetColor: kWhiteColor,
                 ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () => controller.selectPayment(false),
+                  title: MyText(
+                    text: 'Debit Card',
+                    size: 18,
+                    weight: FontWeight.w700,
+                    fontFamily: 'Poppins',
                   ),
-                  height: 234.51,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        offset: const Offset(0, 10),
-                        color: kBlackColor.withOpacity(0.24),
-                        blurRadius: 25,
-                      ),
-                    ],
-                    image: const DecorationImage(
-                      image: AssetImage(
-                        'assets/images/card_bg.png',
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          MyText(
-                            text: 'Bank Name',
-                            fontFamily: 'Poppins',
-                            size: 18,
-                            weight: FontWeight.w700,
-                          ),
-                          Image.asset(
-                            'assets/images/visa.png',
-                            height: 18.2,
-                          ),
-                        ],
-                      ),
-                      MyText(
-                        text: '●●●●    ●●●●    ●●●●    4567',
-                        size: 22,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            children: [
-                              MyText(
-                                text: 'CARDHOLDER NAME',
-                                size: 7,
-                                weight: FontWeight.w700,
-                              ),
-                              MyText(
-                                paddingTop: 15,
-                                text: 'John Doe',
-                                size: 18,
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              MyText(
-                                text: 'EXPIRE DATE',
-                                size: 7,
-                                weight: FontWeight.w700,
-                              ),
-                              MyText(
-                                paddingTop: 15,
-                                text: '05 / 2021',
-                                size: 18,
-                              ),
-                            ],
-                          ),
-                          Container(),
-                        ],
-                      ),
-                    ],
+                  trailing: Radio<bool>(
+                    toggleable: true,
+                    value: false,
+                    groupValue: controller.isCash.value,
+                    activeColor: kSecondaryColor,
+                    onChanged: (value) => controller.selectPayment(false),
                   ),
                 ),
               ),
@@ -157,25 +86,19 @@ class Payment extends StatelessWidget {
                 ),
                 child: ListTile(
                   contentPadding: EdgeInsets.zero,
-                  onTap: () => controller.selectedMethod(
-                    controller.isCash,
-                    1,
-                  ),
+                  onTap: () => controller.selectPayment(true),
                   title: MyText(
                     text: 'Cash on delivery',
                     size: 18,
                     weight: FontWeight.w700,
                     fontFamily: 'Poppins',
                   ),
-                  trailing: Radio(
+                  trailing: Radio<bool>(
                     toggleable: true,
-                    value: controller.isCash!,
-                    groupValue: controller.currentMethod,
+                    value: true,
+                    groupValue: controller.isCash.value,
                     activeColor: kSecondaryColor,
-                    onChanged: (value) => controller.selectedMethod(
-                      controller.isCash,
-                      1,
-                    ),
+                    onChanged: (value) => controller.selectPayment(true),
                   ),
                 ),
               ),
@@ -183,13 +106,16 @@ class Payment extends StatelessWidget {
                 height: 50,
               ),
               OrderBillingInfo(
-                totalCost: 1200,
+                totalCost: controller.getCartTotal(),
               ),
             ],
           ),
           bottomNavigationBar: TotalPriceAndOrderNow(
             buttonText: 'DONE',
-            onOrderTap: () => Get.toNamed(AppLinks.purchaseSuccessful),
+            onOrderTap: () {
+              controller.order();
+              // Get.toNamed(AppLinks.purchaseSuccessful);
+            },
           ),
         );
       },

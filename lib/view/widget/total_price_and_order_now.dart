@@ -93,7 +93,7 @@ class TotalPriceAndOrderNow extends StatelessWidget {
                   : SizedBox(
                       width: 128.97,
                       child: MaterialButton(
-                        onPressed: () => Get.to(() => Address()),
+                        onPressed: onOrderTap ?? () => Get.to(() => Address()),
                         height: 45.51,
                         elevation: 10,
                         color: kPrimaryColor,
