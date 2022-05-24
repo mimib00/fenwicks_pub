@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/discover/post_details.dart';
@@ -26,24 +28,24 @@ class Discover extends StatelessWidget {
               const SizedBox(
                 height: 15,
               ),
-              SizedBox(
-                height: 50,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: 5,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 5,
-                  ),
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return discoverPeoples(
-                      kDummyUser,
-                      'James Bruno',
-                    );
-                  },
-                ),
-              ),
+              // SizedBox(
+              //   height: 50,
+              //   child: ListView.builder(
+              //     shrinkWrap: true,
+              //     itemCount: 5,
+              //     padding: const EdgeInsets.symmetric(
+              //       horizontal: 5,
+              //     ),
+              //     physics: const BouncingScrollPhysics(),
+              //     scrollDirection: Axis.horizontal,
+              //     itemBuilder: (context, index) {
+              //       return discoverPeoples(
+              //         kDummyUser,
+              //         'James Bruno',
+              //       );
+              //     },
+              //   ),
+              // ),
               ListView.builder(
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
@@ -57,9 +59,7 @@ class Discover extends StatelessWidget {
                     profileImage: kDummyUser,
                     name: 'Michael Bruno',
                     hashTag: 'emmastone',
-                    postImage: index.isOdd
-                        ? 'assets/images/32.png'
-                        : 'assets/images/Group 23.png',
+                    postImage: index.isOdd ? 'assets/images/32.png' : 'assets/images/Group 23.png',
                   );
                 },
               ),
@@ -69,7 +69,6 @@ class Discover extends StatelessWidget {
             bottom: 30,
             right: 15,
             child: floatingActionButton(
-              //  OnTap
               () {},
             ),
           ),
@@ -79,45 +78,58 @@ class Discover extends StatelessWidget {
   }
 
   Widget discoverHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 15,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              MyText(
-                text: 'Discover',
-                paddingRight: 15,
-                paddingBottom: 6,
-                size: 33,
-                weight: FontWeight.w700,
-                fontFamily: 'Poppins',
-              ),
-              Image.asset(
-                kCircle,
-                height: 14,
-              ),
-            ],
-          ),
-          GestureDetector(
-            onTap: () => Get.to(
-              () => const DiscoverProfile(),
+    return GetBuilder<AuthController>(builder: (controller) {
+      final user = controller.user.value!;
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 15,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                MyText(
+                  text: 'Discover',
+                  paddingRight: 15,
+                  paddingBottom: 6,
+                  size: 33,
+                  weight: FontWeight.w700,
+                  fontFamily: 'Poppins',
+                ),
+                Image.asset(
+                  kCircle,
+                  height: 14,
+                ),
+              ],
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: Image.asset(
-                kDummyUser,
-                height: 41,
+            GestureDetector(
+              onTap: () => Get.to(
+                () => const DiscoverProfile(),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(360),
+                child: CachedNetworkImage(
+                  imageUrl: user.photo,
+                  fit: BoxFit.cover,
+                  height: 60,
+                  width: 50,
+                  errorWidget: (_, __, ___) => const CircleAvatar(
+                    backgroundColor: Colors.black,
+                    child: Icon(
+                      Icons.person_rounded,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget floatingActionButton(VoidCallback onTap) {
@@ -156,10 +168,7 @@ class Discover extends StatelessWidget {
     );
   }
 
-  Widget discoverPeoples(
-    String profileImage,
-    name,
-  ) {
+  Widget discoverPeoples(String profileImage, name) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 9,

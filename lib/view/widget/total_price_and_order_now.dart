@@ -57,7 +57,7 @@ class TotalPriceAndOrderNow extends StatelessWidget {
                         GetBuilder<ShopController>(
                           builder: (controller) {
                             return MyText(
-                              text: controller.getCartTotal(),
+                              text: controller.getCartTotal().toString(),
                               size: 23,
                               weight: FontWeight.w700,
                               fontFamily: 'Poppins',

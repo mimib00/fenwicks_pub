@@ -1,6 +1,4 @@
-import 'package:fenwicks_pub/controller/payment_controller/payment_controller.dart';
 import 'package:fenwicks_pub/controller/shop_controller.dart';
-import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/custom_app_bar.dart';
