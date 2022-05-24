@@ -96,6 +96,19 @@ class AuthController extends GetxController {
     Get.back();
   }
 
+  void removeAddress(Map<String, dynamic> address) async {
+    try {
+      await _ref.doc(user.value!.id!).update({
+        "address": FieldValue.arrayRemove([
+          address
+        ]),
+      });
+      await getUserData(user.value!.id!);
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+  }
+
   /// fetch user data from firestore and cast it to a [Users] object.
   Future<void> getUserData(String id) async {
     DocumentSnapshot<Map<String, dynamic>>? doc;

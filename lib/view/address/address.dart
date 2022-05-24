@@ -1,4 +1,5 @@
 import 'package:fenwicks_pub/controller/auth_controller.dart';
+import 'package:fenwicks_pub/controller/shop_controller.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
@@ -38,7 +39,7 @@ class Address extends StatelessWidget {
               final address = user.address[index];
               return AddressCards(
                 isBusiness: address["address_type"] == "Work",
-                address: address["address"],
+                address: address,
               );
             },
           );
@@ -57,7 +58,7 @@ class Address extends StatelessWidget {
 }
 
 class AddressCards extends StatelessWidget {
-  final dynamic address;
+  final Map<String, dynamic> address;
   final bool? isBusiness;
   const AddressCards({
     Key? key,
@@ -86,7 +87,11 @@ class AddressCards extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => Get.toNamed(AppLinks.payment),
+          onTap: () {
+            final ShopController controller = Get.find();
+            controller.selectAddress(address["address"]);
+            Get.toNamed(AppLinks.payment);
+          },
           borderRadius: BorderRadius.circular(21),
           splashColor: isBusiness == true ? kBlackColor.withOpacity(0.1) : kWhiteColor.withOpacity(0.1),
           highlightColor: isBusiness == true ? kBlackColor.withOpacity(0.1) : kWhiteColor.withOpacity(0.1),
@@ -119,7 +124,7 @@ class AddressCards extends StatelessWidget {
                       ),
                       MyText(
                         paddingTop: 10,
-                        text: '$address',
+                        text: address["address"],
                         size: 12,
                         weight: FontWeight.w400,
                         color: isBusiness == true ? kBlackColor.withOpacity(0.46) : kWhiteColor,
@@ -128,23 +133,21 @@ class AddressCards extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(
-                  width: 70,
-                  child: MaterialButton(
-                    color: kSecondaryColor,
-                    height: 23,
-                    elevation: 0,
-                    highlightElevation: 0,
-                    focusElevation: 0,
-                    shape: const StadiumBorder(),
-                    onPressed: () {},
-                    child: MyText(
-                      text: 'edit',
-                      size: 11,
-                      weight: FontWeight.w500,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
+                GetBuilder<AuthController>(
+                  builder: (controller) {
+                    return GestureDetector(
+                      onTap: () {
+                        controller.removeAddress(address);
+                      },
+                      child: const CircleAvatar(
+                        backgroundColor: kSecondaryColor,
+                        child: Icon(
+                          Icons.delete_forever,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

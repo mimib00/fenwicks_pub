@@ -12,6 +12,8 @@ class ShopController extends GetxController {
 
   RxList<Order> cart = <Order>[].obs;
 
+  String address = '';
+
   /// Gets a list of the products.
   void getAllProducts() async {
     List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = [];
@@ -51,4 +53,6 @@ class ShopController extends GetxController {
     }
     return price;
   }
+
+  void selectAddress(String addr) => address = addr;
 }
