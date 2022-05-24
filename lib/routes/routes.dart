@@ -49,7 +49,7 @@ class AppRoutes {
     ),
     GetPage(
       name: AppLinks.yourBag,
-      page: () => YourBag(),
+      page: () => const YourBag(),
     ),
     GetPage(
       name: AppLinks.address,

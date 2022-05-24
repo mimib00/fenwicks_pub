@@ -30,8 +30,7 @@ class Payment extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             children: [
               MyText(
-                text:
-                    'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod ',
+                text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod ',
                 size: 15,
                 weight: FontWeight.w400,
                 color: kWhiteColor.withOpacity(0.65),
@@ -185,8 +184,6 @@ class Payment extends StatelessWidget {
               ),
               OrderBillingInfo(
                 totalCost: 1200,
-                deliveryCost: 0.00,
-                saved: 165,
               ),
             ],
           ),

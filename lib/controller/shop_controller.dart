@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fenwicks_pub/model/order.dart';
 import 'package:fenwicks_pub/model/product.dart';
 import 'package:get/get.dart';
 
@@ -8,6 +9,8 @@ class ShopController extends GetxController {
   final CollectionReference<Map<String, dynamic>> _ref = FirebaseFirestore.instance.collection("products");
 
   RxList<Product> products = <Product>[].obs;
+
+  RxList<Order> cart = <Order>[].obs;
 
   /// Gets a list of the products.
   void getAllProducts() async {
@@ -22,5 +25,30 @@ class ShopController extends GetxController {
       products.add(Product.fromJson(doc.data(), doc.id));
     }
     update();
+  }
+
+  void addToCart(Product product) {
+    cart.add(Order(product, 1));
+    update();
+  }
+
+  void removeFromCart(Product product) {
+    cart.removeWhere((element) => product.id == element.product.id);
+    update();
+  }
+
+  void changeQuantity(Order order, int ammount) {
+    final newOrder = Order(order.product, order.quantity + ammount);
+    int index = cart.indexWhere((element) => element.product.id == order.product.id);
+    cart[index] = newOrder;
+    update();
+  }
+
+  double getCartTotal() {
+    double price = 0;
+    for (var order in cart) {
+      price += (order.product.price * order.quantity);
+    }
+    return price;
   }
 }

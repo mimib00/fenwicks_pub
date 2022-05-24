@@ -1,3 +1,5 @@
+import 'package:fenwicks_pub/controller/shop_controller.dart';
+import 'package:fenwicks_pub/model/order.dart';
 import 'package:fenwicks_pub/model/product.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
@@ -78,19 +80,34 @@ class BearGlassWidget extends StatelessWidget {
                     const SizedBox(
                       width: 5,
                     ),
-                    Container(
-                      height: isGridView == true ? 32 : 25,
-                      width: isGridView == true ? 38 : 29,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3),
-                        color: kPrimaryColor,
-                      ),
-                      child: Center(
-                        child: Image.asset(
-                          kShoppingCart,
-                          height: isGridView == true ? 14 : 11.09,
-                        ),
-                      ),
+                    GetBuilder<ShopController>(
+                      builder: (controller) {
+                        List<Order> cart = controller.cart;
+                        bool inCart = cart.where((element) => product!.id == element.product.id).toList().isNotEmpty;
+                        return GestureDetector(
+                          onTap: () {
+                            if (inCart) {
+                              controller.removeFromCart(product!);
+                            } else {
+                              controller.addToCart(product!);
+                            }
+                          },
+                          child: Container(
+                            height: isGridView == true ? 32 : 25,
+                            width: isGridView == true ? 38 : 29,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(3),
+                              color: inCart ? Colors.green : kPrimaryColor,
+                            ),
+                            child: Center(
+                              child: Image.asset(
+                                kShoppingCart,
+                                height: isGridView == true ? 14 : 11.09,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

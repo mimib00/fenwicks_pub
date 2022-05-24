@@ -8,11 +8,9 @@ class OrderBillingInfo extends StatelessWidget {
   OrderBillingInfo({
     Key? key,
     this.totalCost,
-    this.deliveryCost,
-    this.saved,
   }) : super(key: key);
 
-  double? totalCost, deliveryCost, saved;
+  double? totalCost;
 
   @override
   Widget build(BuildContext context) {
@@ -52,38 +50,38 @@ class OrderBillingInfo extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              MyText(
-                text: 'Delivery Cost',
-                size: 12,
-                fontFamily: 'Poppins',
-              ),
-              MyText(
-                text: '\$$deliveryCost',
-                size: 12,
-                weight: FontWeight.w700,
-                fontFamily: 'Poppins',
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              MyText(
-                text: 'Saved',
-                size: 12,
-                fontFamily: 'Poppins',
-              ),
-              MyText(
-                text: '\$$saved',
-                size: 12,
-                weight: FontWeight.w700,
-                fontFamily: 'Poppins',
-              ),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     MyText(
+          //       text: 'Delivery Cost',
+          //       size: 12,
+          //       fontFamily: 'Poppins',
+          //     ),
+          //     MyText(
+          //       text: '\$$deliveryCost',
+          //       size: 12,
+          //       weight: FontWeight.w700,
+          //       fontFamily: 'Poppins',
+          //     ),
+          //   ],
+          // ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     MyText(
+          //       text: 'Saved',
+          //       size: 12,
+          //       fontFamily: 'Poppins',
+          //     ),
+          //     MyText(
+          //       text: '\$$saved',
+          //       size: 12,
+          //       weight: FontWeight.w700,
+          //       fontFamily: 'Poppins',
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );

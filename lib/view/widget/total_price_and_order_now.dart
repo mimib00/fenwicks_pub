@@ -1,3 +1,4 @@
+import 'package:fenwicks_pub/controller/shop_controller.dart';
 import 'package:fenwicks_pub/model/product.dart';
 import 'package:fenwicks_pub/view/address/address.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
@@ -53,37 +54,61 @@ class TotalPriceAndOrderNow extends StatelessWidget {
                           fontFamily: 'Poppins',
                           color: kPrimaryColor,
                         ),
-                        MyText(
-                          text: '88.23',
-                          size: 23,
-                          weight: FontWeight.w700,
-                          fontFamily: 'Poppins',
-                          color: kPrimaryColor,
+                        GetBuilder<ShopController>(
+                          builder: (controller) {
+                            return MyText(
+                              text: controller.getCartTotal(),
+                              size: 23,
+                              weight: FontWeight.w700,
+                              fontFamily: 'Poppins',
+                              color: kPrimaryColor,
+                            );
+                          },
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                width: 128.97,
-                child: MaterialButton(
-                  onPressed: product!.qty > 0 ? () => Get.to(() => Address()) : () {},
-                  height: 45.51,
-                  elevation: 10,
-                  color: product!.qty > 0 ? kPrimaryColor : kRedColor,
-                  splashColor: kWhiteColor.withOpacity(0.1),
-                  highlightColor: kWhiteColor.withOpacity(0.1),
-                  shape: const StadiumBorder(),
-                  child: MyText(
-                    text: product!.qty > 0 ? buttonText : "Out Of Stock",
-                    size: 13,
-                    weight: FontWeight.w500,
-                    color: kWhiteColor,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-              ),
+              product != null
+                  ? SizedBox(
+                      width: 128.97,
+                      child: MaterialButton(
+                        onPressed: product!.qty > 0 ? () => Get.to(() => Address()) : () {},
+                        height: 45.51,
+                        elevation: 10,
+                        color: product!.qty > 0 ? kPrimaryColor : kRedColor,
+                        splashColor: kWhiteColor.withOpacity(0.1),
+                        highlightColor: kWhiteColor.withOpacity(0.1),
+                        shape: const StadiumBorder(),
+                        child: MyText(
+                          text: product!.qty > 0 ? buttonText : "Out Of Stock",
+                          size: 13,
+                          weight: FontWeight.w500,
+                          color: kWhiteColor,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    )
+                  : SizedBox(
+                      width: 128.97,
+                      child: MaterialButton(
+                        onPressed: () => Get.to(() => Address()),
+                        height: 45.51,
+                        elevation: 10,
+                        color: kPrimaryColor,
+                        splashColor: kWhiteColor.withOpacity(0.1),
+                        highlightColor: kWhiteColor.withOpacity(0.1),
+                        shape: const StadiumBorder(),
+                        child: MyText(
+                          text: buttonText,
+                          size: 13,
+                          weight: FontWeight.w500,
+                          color: kWhiteColor,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ),
             ],
           ),
         ),

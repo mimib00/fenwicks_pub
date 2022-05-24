@@ -43,9 +43,7 @@ class ProductDetails extends StatelessWidget {
             ),
             child: IconButton(
               onPressed: () => Get.to(
-                () => YourBag(
-                  price: product!.price,
-                ),
+                () => const YourBag(),
               ),
               icon: Image.asset(
                 kAddToCart,
