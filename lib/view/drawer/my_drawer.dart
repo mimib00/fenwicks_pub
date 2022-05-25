@@ -100,6 +100,12 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
                   AppLinks.topSaleAndFutureProducts,
                 ),
               ),
+              DrawerTiles(
+                title: 'Orders',
+                onTap: () => Get.toNamed(
+                  AppLinks.orderHistory,
+                ),
+              ),
             ],
           ),
           Column(

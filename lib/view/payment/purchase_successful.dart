@@ -58,7 +58,7 @@ class PurchaseSuccessful extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              flex: 4,
+                              flex: 3,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
