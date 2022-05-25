@@ -11,8 +11,8 @@ class MyText extends StatelessWidget {
   VoidCallback? onTap;
 
   // ignore: prefer_typing_uninitialized_variables
-  var maxLines, overFlow;
-
+  var maxLines;
+  final TextOverflow? overFlow;
   MyText({
     Key? key,
     @required this.text,

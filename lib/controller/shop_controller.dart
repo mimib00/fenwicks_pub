@@ -5,6 +5,7 @@ import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/model/order.dart';
 import 'package:fenwicks_pub/model/product.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
+import 'package:fenwicks_pub/view/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,8 @@ class ShopController extends GetxController {
   String address = '';
 
   RxBool isCash = false.obs;
+
+  Map<String, dynamic> orderData = {};
 
   /// Gets a list of the products.
   void getAllProducts() async {
@@ -96,18 +99,38 @@ class ShopController extends GetxController {
         "total": getCartTotal(),
         "products": items,
       };
-      await ref.add(data);
+
+      final order = await ref.add(data);
+      final orderInfo = await order.get();
+      orderData = {
+        "data": orderInfo.data()!,
+        "id": orderInfo.id
+      };
+
+      auth.updateUserData({
+        "orders": FieldValue.arrayUnion([
+          ref.doc(orderInfo.id)
+        ])
+      });
+
       Get.toNamed(AppLinks.purchaseSuccessful);
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
     }
   }
 
+  /// Show the stripe interface for the product
   Future<void> _useStripe() async {
+    Get.dialog(const LoadingCard(), barrierDismissible: false);
+    final CollectionReference<Map<String, dynamic>> ref = FirebaseFirestore.instance.collection("orders");
     final AuthController authController = Get.find();
     final user = authController.user.value!;
+    List<Map<String, dynamic>> items = [];
+    var temp = cart.where((p0) => p0.quantity > 0).toList();
+    for (var item in temp) {
+      items.add(item.toMap());
+    }
     try {
-      print("Test");
       var response = await http.post(
         Uri.parse('https://europe-west1-fenwicks-pub.cloudfunctions.net/stripePaymentIntentrequest'),
         body: {
@@ -115,8 +138,9 @@ class ShopController extends GetxController {
           'amount': (getCartTotal().toInt() * 100).toString(),
         },
       );
-      print(response.body);
+
       final paymentIntentData = jsonDecode(response.body);
+      Get.back();
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           customerId: paymentIntentData['customer'],
@@ -130,15 +154,33 @@ class ShopController extends GetxController {
         ),
       );
       await Stripe.instance.presentPaymentSheet();
-      Get.snackbar(
-        'Payment',
-        'Payment Successful',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        margin: const EdgeInsets.all(10),
-        duration: const Duration(seconds: 2),
-      );
+      // add order to firestore.
+      Map<String, dynamic> data = {
+        "owner": FirebaseFirestore.instance.collection("users").doc(user.id),
+        "created_at": FieldValue.serverTimestamp(),
+        "address": address,
+        "method": "Debit Card",
+        "status": "pending",
+        "total": getCartTotal(),
+        "products": items,
+      };
+
+      final order = await ref.add(data);
+      final orderInfo = await order.get();
+      orderData = {
+        "data": orderInfo.data()!,
+        "id": orderInfo.id
+      };
+
+      authController.updateUserData({
+        "orders": FieldValue.arrayUnion([
+          ref.doc(orderInfo.id)
+        ])
+      });
+
+      // genrate recipt.
+
+      Get.toNamed(AppLinks.purchaseSuccessful);
     } catch (e) {
       if (e is StripeException) {
         Get.showSnackbar(errorCard("Error from Stripe: ${e.error.localizedMessage}"));
@@ -147,44 +189,4 @@ class ShopController extends GetxController {
       }
     }
   }
-
-  // void _displayPaymentSheet() async {
-  //   try {
-  //     await Stripe.instance.presentPaymentSheet();
-  //     Get.snackbar(
-  //       'Payment',
-  //       'Payment Successful',
-  //       snackPosition: SnackPosition.BOTTOM,
-  //       backgroundColor: Colors.green,
-  //       colorText: Colors.white,
-  //       margin: const EdgeInsets.all(10),
-  //       duration: const Duration(seconds: 2),
-  //     );
-  //   } on Exception catch (e) {
-  // if (e is StripeException) {
-  //   Get.showSnackbar(errorCard("Error from Stripe: ${e.error.localizedMessage}"));
-  // } else {
-  //   Get.showSnackbar(errorCard("Unforeseen error: $e"));
-  // }
-  //   }
-  // }
-
-  // Future<Map<String, dynamic>> _createPaymentIntent() async {
-  //   var res = '';
-
-  //   try {
-  //     var response = await http.post(
-  //       Uri.parse('https://europe-west1-fenwicks-pub.cloudfunctions.net/stripePaymentIntentrequest'),
-  //       body: {
-  //         'email': user.email,
-  //         'amount': getCartTotal().toString(),
-  //       },
-  //     );
-  //     if (response.statusCode == 404) throw response.body;
-  //     res = response.body;
-  //   } catch (e) {
-  //     Get.showSnackbar(errorCard(e.toString()));
-  //   }
-  //   return jsonDecode(res);
-  // }
 }
