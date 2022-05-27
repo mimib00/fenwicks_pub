@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
+import 'package:fenwicks_pub/view/discover/add_post.dart';
 import 'package:fenwicks_pub/view/discover/post_details.dart';
 import 'package:fenwicks_pub/view/drawer/my_drawer.dart';
 import 'package:fenwicks_pub/view/profile/discover_profile.dart';
@@ -25,27 +26,7 @@ class Discover extends StatelessWidget {
             ),
             children: [
               discoverHeader(),
-              const SizedBox(
-                height: 15,
-              ),
-              // SizedBox(
-              //   height: 50,
-              //   child: ListView.builder(
-              //     shrinkWrap: true,
-              //     itemCount: 5,
-              //     padding: const EdgeInsets.symmetric(
-              //       horizontal: 5,
-              //     ),
-              //     physics: const BouncingScrollPhysics(),
-              //     scrollDirection: Axis.horizontal,
-              //     itemBuilder: (context, index) {
-              //       return discoverPeoples(
-              //         kDummyUser,
-              //         'James Bruno',
-              //       );
-              //     },
-              //   ),
-              // ),
+              const SizedBox(height: 15),
               ListView.builder(
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
@@ -68,9 +49,9 @@ class Discover extends StatelessWidget {
           Positioned(
             bottom: 30,
             right: 15,
-            child: floatingActionButton(
-              () {},
-            ),
+            child: floatingActionButton(() {
+              Get.to(() => AddPost());
+            }),
           ),
         ],
       ),
