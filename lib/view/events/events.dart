@@ -34,22 +34,16 @@ class Events extends StatelessWidget {
         return MyDrawer(
           child: ListView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(
-              vertical: 15,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 15),
             children: [
               const ProfileTile(),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               GetBuilder<AuthController>(
                 builder: (controller) {
                   return Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: totalRewardPoints(controller.user.value!.points),
                       ),
                       Visibility(
@@ -74,9 +68,7 @@ class Events extends StatelessWidget {
                   color: kWhiteColor.withOpacity(0.10),
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               // const HorizontalCalendar(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -333,9 +325,9 @@ class ProfileTile extends StatelessWidget {
         final user = controller.user.value!;
         final name = user.name.split(" ")[0];
         return ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 15,
-          ),
+          // contentPadding: const EdgeInsets.symmetric(
+          //   horizontal: 15,
+          // ),
           title: MyText(
             text: 'Hello, $name!',
             size: 18,
@@ -355,21 +347,19 @@ class ProfileTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(100),
               color: kSecondaryColor,
             ),
-            child: Flexible(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(360),
-                child: CachedNetworkImage(
-                  imageUrl: user.photo,
-                  fit: BoxFit.cover,
-                  height: 60,
-                  width: 50,
-                  errorWidget: (_, __, ___) => const CircleAvatar(
-                    backgroundColor: kPrimaryColor,
-                    child: Icon(
-                      Icons.person_rounded,
-                      size: 30,
-                      color: Colors.white,
-                    ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(360),
+              child: CachedNetworkImage(
+                imageUrl: user.photo,
+                fit: BoxFit.cover,
+                height: 60,
+                width: 50,
+                errorWidget: (_, __, ___) => const CircleAvatar(
+                  backgroundColor: kPrimaryColor,
+                  child: Icon(
+                    Icons.person_rounded,
+                    size: 30,
+                    color: Colors.white,
                   ),
                 ),
               ),

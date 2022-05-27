@@ -41,9 +41,7 @@ Widget totalRewardPoints(int points) {
       Align(
         alignment: Alignment.topRight,
         child: Padding(
-          padding: const EdgeInsets.only(
-            right: 15,
-          ),
+          padding: const EdgeInsets.only(right: 15, top: 10),
           child: Image.asset(
             kCoin2,
             height: 22.84,
