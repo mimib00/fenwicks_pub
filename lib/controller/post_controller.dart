@@ -58,6 +58,7 @@ class PostController extends GetxController {
             "photo": imageUrl,
             "likes": [],
             "comments": [],
+            "created_at": FieldValue.serverTimestamp(),
           };
 
           final post = await _ref.add(data);
@@ -77,6 +78,7 @@ class PostController extends GetxController {
           "photo": "",
           "likes": [],
           "comments": [],
+          "created_at": FieldValue.serverTimestamp(),
         };
         final post = await _ref.add(data);
         await authController.updateUserData({
@@ -88,6 +90,40 @@ class PostController extends GetxController {
         Get.showSnackbar(messageCard("Post submited successfully"));
       }
       Get.back();
+    } catch (e) {
+      Get.showSnackbar(errorCard(e.toString()));
+    }
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>>? getPosts() {
+    Stream<QuerySnapshot<Map<String, dynamic>>>? snap;
+    try {
+      snap = _ref.orderBy("created_at", descending: true).snapshots();
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+    return snap;
+  }
+
+  void likePost(String id, String uid) async {
+    try {
+      await _ref.doc(id).set({
+        "likes": FieldValue.arrayUnion([
+          FirebaseFirestore.instance.collection("users").doc(uid)
+        ])
+      }, SetOptions(merge: true));
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+  }
+
+  void unLikePost(String id, String uid) async {
+    try {
+      await _ref.doc(id).set({
+        "likes": FieldValue.arrayRemove([
+          FirebaseFirestore.instance.collection("users").doc(uid)
+        ])
+      }, SetOptions(merge: true));
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
     }

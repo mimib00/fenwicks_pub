@@ -1,30 +1,36 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fenwicks_pub/model/users.dart';
 
-class Post {
+class Posts {
   final String? id;
-  final DocumentReference<Map<String, dynamic>> owner;
+  final Users owner;
   final String caption;
   final String photo;
-  final int likes;
+  final List likes;
   final List comments;
+  final Timestamp createdAt;
 
-  Post(
+  Posts(
     this.owner,
     this.caption,
     this.photo,
     this.likes,
-    this.comments, {
+    this.comments,
+    this.createdAt, {
     this.id,
   });
 
-  factory Post.fromJson(Map<String, dynamic> data, {String? id}) => Post(
-        data["owner"],
-        data["caption"],
-        data["photo"],
-        data["likes"].length,
-        data["comments"],
-        id: id,
-      );
+  factory Posts.fromJson(Map<String, dynamic> data, {String? id}) {
+    return Posts(
+      data["owner"],
+      data["caption"],
+      data["photo"],
+      data["likes"],
+      data["comments"],
+      data["created_at"],
+      id: id,
+    );
+  }
 
   Map<String, dynamic> toMap() => {
         "caption": caption,

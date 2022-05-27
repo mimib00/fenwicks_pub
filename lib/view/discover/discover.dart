@@ -1,17 +1,41 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
+import 'package:fenwicks_pub/controller/post_controller.dart';
+import 'package:fenwicks_pub/model/post.dart';
+import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/discover/add_post.dart';
 import 'package:fenwicks_pub/view/discover/post_details.dart';
 import 'package:fenwicks_pub/view/drawer/my_drawer.dart';
 import 'package:fenwicks_pub/view/profile/discover_profile.dart';
+import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class Discover extends StatelessWidget {
   const Discover({Key? key}) : super(key: key);
+
+  Future<List<Posts>> getOwner(List<QueryDocumentSnapshot<Map<String, dynamic>>> docs) async {
+    List<Posts> posts = [];
+    try {
+      for (var doc in docs) {
+        DocumentReference<Map<String, dynamic>> ref = doc.data()["owner"];
+        final temp = await ref.get();
+        final user = Users.fromJson(temp.data()!, uid: temp.id);
+        var map = doc.data();
+        map["owner"] = user;
+
+        posts.add(Posts.fromJson(map, id: doc.id));
+      }
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+    return posts;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +43,6 @@ class Discover extends StatelessWidget {
       child: Stack(
         children: [
           ListView(
-            shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.symmetric(
               vertical: 20,
@@ -27,20 +50,32 @@ class Discover extends StatelessWidget {
             children: [
               discoverHeader(),
               const SizedBox(height: 15),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 15,
-                ),
-                itemCount: 3,
-                itemBuilder: (context, index) {
-                  return Post(
-                    profileImage: kDummyUser,
-                    name: 'Michael Bruno',
-                    hashTag: 'emmastone',
-                    postImage: index.isOdd ? 'assets/images/32.png' : 'assets/images/Group 23.png',
+              GetBuilder<PostController>(
+                init: PostController(),
+                builder: (controller) {
+                  return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                    stream: controller.getPosts(),
+                    builder: (context, snapshot) {
+                      if (snapshot.data == null || snapshot.data!.docs.isEmpty) return Container();
+                      return FutureBuilder<List<Posts>>(
+                        future: getOwner(snapshot.data!.docs),
+                        builder: (context, snapshot) {
+                          if (snapshot.data == null || snapshot.data!.isEmpty) return Container();
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const BouncingScrollPhysics(),
+                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              final post = snapshot.data![index];
+                              return Post(
+                                post: post,
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
                   );
                 },
               ),
@@ -190,42 +225,47 @@ class Discover extends StatelessWidget {
 
 // ignore: must_be_immutable
 class Post extends StatelessWidget {
-  Post({
+  final Posts post;
+  const Post({
     Key? key,
-    this.profileImage,
-    this.name,
-    this.hashTag,
-    this.postImage,
+    required this.post,
   }) : super(key: key);
-
-  String? profileImage, name, hashTag, postImage;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 30,
-      ),
+      padding: const EdgeInsets.only(bottom: 30),
       child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: Image.asset(
-                profileImage!,
-                height: 52,
+              borderRadius: BorderRadius.circular(360),
+              child: CachedNetworkImage(
+                imageUrl: post.owner.photo,
                 fit: BoxFit.cover,
+                height: 60,
+                width: 50,
+                errorWidget: (_, __, ___) => const CircleAvatar(
+                  backgroundColor: Colors.black,
+                  child: Icon(
+                    Icons.person_rounded,
+                    size: 30,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
             title: MyText(
-              text: name,
+              text: post.owner.name,
               size: 16,
               weight: FontWeight.w600,
               fontFamily: 'Poppins',
             ),
             subtitle: MyText(
-              text: '@$hashTag',
+              text: DateFormat.yMMMMd().format(post.createdAt.toDate()),
               size: 11,
               color: kGreyColor3,
               fontFamily: 'Poppins',
@@ -235,96 +275,99 @@ class Post extends StatelessWidget {
               color: kSecondaryColor,
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           GestureDetector(
-            onTap: () => Get.to(
-              () => const PostDetails(),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                postImage!,
-                height: 196,
-                fit: BoxFit.cover,
-              ),
+            onTap: () => Get.to(() => const PostDetails()),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Visibility(
+                  visible: post.photo.isNotEmpty,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: CachedNetworkImage(
+                      imageUrl: post.photo,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(
-            height: 15,
-          ),
+          const SizedBox(height: 15),
           likeCommentShare(),
         ],
       ),
     );
   }
 
-  Padding likeCommentShare() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 15,
-      ),
-      child: Row(
-        children: [
-          Row(
+  Widget likeCommentShare() {
+    final AuthController authController = Get.find();
+    final user = authController.user.value!;
+
+    bool isLiked = post.likes.isNotEmpty ? post.likes.where((element) => element == FirebaseFirestore.instance.collection("users").doc(user.id)).isNotEmpty : false;
+
+    return GetBuilder<PostController>(
+      init: PostController(),
+      builder: (controller) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Row(
             children: [
-              Image.asset(
-                kLike,
-                height: 19.79,
+              GestureDetector(
+                onTap: () {
+                  if (isLiked) {
+                    controller.unLikePost(post.id!, user.id!);
+                  } else {
+                    controller.likePost(post.id!, user.id!);
+                  }
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.favorite,
+                      size: 28,
+                      color: isLiked ? kRedColor : kSecondaryColor,
+                    ),
+                    MyText(
+                      text: post.likes.length.toString(),
+                      size: 12,
+                      paddingLeft: 5,
+                      paddingBottom: 5,
+                      color: kSecondaryColor,
+                      weight: FontWeight.w600,
+                      fontFamily: 'Poppins',
+                    ),
+                  ],
+                ),
               ),
-              MyText(
-                text: '247',
-                size: 12,
-                paddingLeft: 5,
-                paddingBottom: 5,
-                color: kSecondaryColor,
-                weight: FontWeight.w600,
-                fontFamily: 'Poppins',
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 35,
+                ),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      kComment,
+                      height: 19.95,
+                    ),
+                    MyText(
+                      text: post.comments.length.toString(),
+                      size: 12,
+                      paddingLeft: 5,
+                      paddingBottom: 5,
+                      color: kSecondaryColor,
+                      weight: FontWeight.w600,
+                      fontFamily: 'Poppins',
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 35,
-            ),
-            child: Row(
-              children: [
-                Image.asset(
-                  kComment,
-                  height: 19.95,
-                ),
-                MyText(
-                  text: '57',
-                  size: 12,
-                  paddingLeft: 5,
-                  paddingBottom: 5,
-                  color: kSecondaryColor,
-                  weight: FontWeight.w600,
-                  fontFamily: 'Poppins',
-                ),
-              ],
-            ),
-          ),
-          Row(
-            children: [
-              Image.asset(
-                kShare,
-                height: 19.64,
-              ),
-              MyText(
-                text: '33',
-                size: 12,
-                paddingLeft: 5,
-                paddingBottom: 5,
-                color: kSecondaryColor,
-                weight: FontWeight.w600,
-                fontFamily: 'Poppins',
-              ),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
