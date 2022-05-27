@@ -6,7 +6,6 @@ import 'package:fenwicks_pub/model/order.dart';
 import 'package:fenwicks_pub/model/product.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/widget/loading.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -140,7 +139,7 @@ class ShopController extends GetxController {
       );
 
       final paymentIntentData = jsonDecode(response.body);
-      Get.back();
+      Get.back(closeOverlays: true);
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           customerId: paymentIntentData['customer'],
@@ -176,17 +175,26 @@ class ShopController extends GetxController {
         "orders": FieldValue.arrayUnion([
           ref.doc(orderInfo.id)
         ])
-      });
-
-      // genrate recipt.
-
-      Get.toNamed(AppLinks.purchaseSuccessful);
+      }).then((value) => Get.toNamed(AppLinks.purchaseSuccessful));
     } catch (e) {
       if (e is StripeException) {
         Get.showSnackbar(errorCard("Error from Stripe: ${e.error.localizedMessage}"));
       } else {
         Get.showSnackbar(errorCard("Unforeseen error: $e"));
       }
+    }
+  }
+
+  void markAsDelivered(String id) async {
+    final CollectionReference<Map<String, dynamic>> ref = FirebaseFirestore.instance.collection("orders");
+    try {
+      await ref.doc(id).set({
+        "status": "delivered"
+      }, SetOptions(merge: true));
+      Get.back();
+      Get.back();
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
     }
   }
 }

@@ -1,5 +1,6 @@
-import 'package:fenwicks_pub/view/constant/color.dart';
+import 'package:fenwicks_pub/controller/shop_controller.dart';
 import 'package:fenwicks_pub/view/widget/back_button.dart';
+import 'package:fenwicks_pub/view/widget/my_button.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,66 +31,35 @@ class OrderDetails extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.only(top: 50, left: 10, right: 10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                title('Order Number'),
-                SizedBox(
-                  width: Get.width * .3,
-                  child: heading(id),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                title('DATE'),
-                heading(DateFormat.yMMMd().format(data["created_at"].toDate())),
-              ],
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                title('TOTAL'),
-                heading('\$${data["total"]}'),
-              ],
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                title('METHOD'),
-                heading(data['method']),
-              ],
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                title('STATUS'),
-                heading(data['status']),
-              ],
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                title('Address'),
-                heading(data['address']),
-              ],
+            title('Order Number'),
+            heading(id),
+            const SizedBox(height: 30),
+            title('DATE'),
+            heading(DateFormat.yMMMd().format(data["created_at"].toDate())),
+            const SizedBox(height: 30),
+            title('TOTAL'),
+            heading('\$${data["total"]}'),
+            const SizedBox(height: 30),
+            title('METHOD'),
+            heading(data['method']),
+            const SizedBox(height: 30),
+            title('STATUS'),
+            heading(data['status']),
+            const SizedBox(height: 30),
+            title('Address'),
+            heading(data['address']),
+            const SizedBox(height: 50),
+            Visibility(
+              visible: data['status'] != "delivered",
+              child: MyButton(
+                text: "Mark as Delivered",
+                onTap: () {
+                  final ShopController controller = Get.find();
+                  controller.markAsDelivered(id);
+                },
+              ),
             ),
           ],
         ),

@@ -53,7 +53,7 @@ class AuthController extends GetxController {
   }
 
   /// Update user data in user's firestore collection call users
-  void updateUserData(Map<String, dynamic> data) async {
+  Future<void> updateUserData(Map<String, dynamic> data) async {
     try {
       await _ref.doc(user.value!.id!).set(data, SetOptions(merge: true));
       await getUserData(user.value!.id!);
