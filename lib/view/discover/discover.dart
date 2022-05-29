@@ -121,9 +121,7 @@ class Discover extends StatelessWidget {
               ],
             ),
             GestureDetector(
-              onTap: () => Get.to(
-                () => const DiscoverProfile(),
-              ),
+              onTap: () => Get.to(() => const DiscoverProfile()),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(360),
                 child: CachedNetworkImage(
