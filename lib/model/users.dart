@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fenwicks_pub/model/post.dart';
 
 class Users {
   final String? id;
@@ -11,6 +10,7 @@ class Users {
   final List<Map<String, dynamic>> history;
   final List<DocumentReference<Map<String, dynamic>>> orders;
   final List<DocumentReference<Map<String, dynamic>>> posts;
+  final List<DocumentReference<Map<String, dynamic>>> saved;
   final int points;
 
   Users(
@@ -21,7 +21,8 @@ class Users {
     this.photo,
     this.history,
     this.orders,
-    this.posts, {
+    this.posts,
+    this.saved, {
     this.id,
     this.address = const [],
   });
@@ -32,14 +33,15 @@ class Users {
     List<Map<String, dynamic>> addresses = data["address"].cast<Map<String, dynamic>>();
 
     return Users(
-      data["name"],
-      data["email"],
-      data["phone"],
+      data["name"] ?? '',
+      data["email"] ?? '',
+      data["phone"] ?? '',
       data["points"] ?? 0,
       data["photo"] ?? '',
       map,
       order,
-      data["posts"].cast<DocumentReference<Map<String, dynamic>>>(),
+      data["posts"] != null ? data["posts"].cast<DocumentReference<Map<String, dynamic>>>() : <DocumentReference<Map<String, dynamic>>>[],
+      data["saved"] != null ? data["saved"].cast<DocumentReference<Map<String, dynamic>>>() : <DocumentReference<Map<String, dynamic>>>[],
       address: addresses,
       id: uid,
     );
@@ -53,5 +55,8 @@ class Users {
         "points": points,
         "photo": photo,
         "history": history,
+        "posts": posts,
+        "saved": saved,
+        "orders": orders,
       };
 }

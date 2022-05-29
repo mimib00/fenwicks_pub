@@ -187,4 +187,38 @@ class PostController extends GetxController {
       Get.showSnackbar(errorCard(e.message!));
     }
   }
+
+  void bookmark(String id) async {
+    final AuthController authController = Get.find();
+    final user = authController.user.value!;
+    bool isSaved = user.saved.isNotEmpty ? user.saved.where((element) => element == FirebaseFirestore.instance.collection("posts").doc(id)).isNotEmpty : false;
+
+    try {
+      if (isSaved) {
+        await FirebaseFirestore.instance.collection("users").doc(user.id).set(
+          {
+            "saved": FieldValue.arrayRemove([
+              FirebaseFirestore.instance.collection("posts").doc(id)
+            ])
+          },
+          SetOptions(merge: true),
+        );
+      } else {
+        await FirebaseFirestore.instance.collection("users").doc(user.id).set(
+          {
+            "saved": FieldValue.arrayUnion(
+              [
+                FirebaseFirestore.instance.collection("posts").doc(id)
+              ],
+            )
+          },
+          SetOptions(merge: true),
+        );
+      }
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+    await authController.getUserData(user.id!);
+    update();
+  }
 }

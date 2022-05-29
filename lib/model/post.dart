@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/model/users.dart';
 
@@ -21,15 +23,22 @@ class Posts {
   });
 
   factory Posts.fromJson(Map<String, dynamic> data, {String? id}) {
-    return Posts(
-      data["owner"],
-      data["caption"],
-      data["photo"],
-      data["likes"],
-      data["comments"].cast<Map<String, dynamic>>(),
-      data["created_at"],
-      id: id,
-    );
+    Posts? post;
+    try {
+      post = Posts(
+        data["owner"],
+        data["caption"] ?? '',
+        data["photo"] ?? '',
+        data["likes"] ?? [],
+        data["comments"].cast<Map<String, dynamic>>(),
+        data["created_at"],
+        id: id,
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+
+    return post!;
   }
 
   Map<String, dynamic> toMap() => {

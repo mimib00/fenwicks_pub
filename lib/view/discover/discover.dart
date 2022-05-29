@@ -44,9 +44,7 @@ class Discover extends StatelessWidget {
         children: [
           ListView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(
-              vertical: 20,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             children: [
               discoverHeader(),
               const SizedBox(height: 15),
@@ -68,9 +66,7 @@ class Discover extends StatelessWidget {
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
                               final post = snapshot.data![index];
-                              return Post(
-                                post: post,
-                              );
+                              return Post(post: post);
                             },
                           );
                         },
@@ -231,6 +227,9 @@ class Post extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthController authController = Get.find();
+    final user = authController.user.value!;
+    bool isSaved = user.saved.isNotEmpty ? user.saved.where((element) => element == FirebaseFirestore.instance.collection("posts").doc(post.id)).isNotEmpty : false;
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: Column(
@@ -268,14 +267,25 @@ class Post extends StatelessWidget {
               color: kGreyColor3,
               fontFamily: 'Poppins',
             ),
-            trailing: const Icon(
-              Icons.more_vert,
-              color: kSecondaryColor,
-            ),
+            trailing: GetBuilder<PostController>(builder: (controller) {
+              return IconButton(
+                onPressed: () {
+                  controller.bookmark(post.id!);
+                },
+                icon: Icon(
+                  isSaved ? Icons.bookmark_rounded : Icons.bookmark_outline_rounded,
+                  color: kSecondaryColor,
+                ),
+              );
+            }),
           ),
           const SizedBox(height: 10),
           GestureDetector(
-            onTap: () => Get.to(() => PostDetails(post: post)),
+            onTap: () {
+              if (post.photo.isNotEmpty) {
+                Get.to(() => PostDetails(post: post));
+              }
+            },
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,

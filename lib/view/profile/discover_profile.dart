@@ -1,11 +1,10 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/model/post.dart';
 import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
+import 'package:fenwicks_pub/view/profile/saved_posts.dart';
 import 'package:fenwicks_pub/view/widget/back_button.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
@@ -33,7 +32,7 @@ class DiscoverProfile extends StatelessWidget {
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
     }
-    log(posts.toString());
+
     return posts;
   }
 
@@ -45,6 +44,15 @@ class DiscoverProfile extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             leading: backButton(),
+            actions: [
+              IconButton(
+                onPressed: () => Get.to(() => const SavedScreen()),
+                icon: const Icon(
+                  Icons.bookmark_rounded,
+                  color: kSecondaryColor,
+                ),
+              ),
+            ],
           ),
           body: ListView(
             shrinkWrap: true,
@@ -82,40 +90,6 @@ class DiscoverProfile extends StatelessWidget {
                   );
                 },
               ),
-              // StaggeredGridView.countBuilder(
-              // shrinkWrap: true,
-              // crossAxisCount: 3,
-              // physics: const BouncingScrollPhysics(),
-              // mainAxisSpacing: 10,
-              // crossAxisSpacing: 10,
-              // itemCount: user.posts.length,
-              // staggeredTileBuilder: (int index) {
-              //   return StaggeredTile.count(
-              //     index == 4 ? 2 : 1,
-              //     index == 4 ? 2.3 : 1.0,
-              //   );
-              // },
-              // itemBuilder: (context, index) => FutureBuilder<Posts>(
-              //   future: getPost(user.posts[index]),
-              //   builder: (context, snap) {
-              //     if (snap.data == null || snap.data!.photo.isEmpty) return Container();
-              //     final post = snap.data;
-              //     return ClipRRect(
-              //       borderRadius: BorderRadius.circular(5),
-              //       child: CachedNetworkImage(
-              //         imageUrl: post!.photo,
-              //       ),
-              //     );
-              //   },
-              // ),
-              // itemBuilder: (context, index) => ClipRRect(
-              //   borderRadius: BorderRadius.circular(5),
-              //   child: Image.asset(
-              //     controller.getDummyImages[index],
-              //     fit: BoxFit.cover,
-              //   ),
-              // ),
-              // ),
             ],
           ),
         );
@@ -124,7 +98,6 @@ class DiscoverProfile extends StatelessWidget {
   }
 }
 
-// ignore: must_be_immutable
 class ProfileCard extends StatelessWidget {
   final Users user;
   const ProfileCard({
@@ -185,7 +158,7 @@ class ProfileCard extends StatelessWidget {
                 fontFamily: 'Poppins',
               ),
               MyText(
-                text: user.address.first["address"] ?? "",
+                text: user.address.isNotEmpty ? user.address.first["address"] : "",
                 size: 14,
                 color: kSecondaryColor,
                 fontFamily: 'Poppins',
