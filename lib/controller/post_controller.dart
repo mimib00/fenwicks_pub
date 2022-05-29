@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -122,6 +123,64 @@ class PostController extends GetxController {
       await _ref.doc(id).set({
         "likes": FieldValue.arrayRemove([
           FirebaseFirestore.instance.collection("users").doc(uid)
+        ])
+      }, SetOptions(merge: true));
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+  }
+
+  void likeComment(String id, Map<String, dynamic> comment, String uid) async {
+    try {
+      Map<String, dynamic> temp = comment.map((key, value) => MapEntry(key, value));
+      await _ref.doc(id).set({
+        "comments": FieldValue.arrayRemove([
+          comment
+        ])
+      }, SetOptions(merge: true));
+      List<DocumentReference> likes = temp['likes'].cast<DocumentReference>();
+      likes.add(FirebaseFirestore.instance.collection("users").doc(uid));
+      temp["likes"] = likes;
+
+      await _ref.doc(id).set({
+        "comments": FieldValue.arrayUnion([
+          temp
+        ])
+      }, SetOptions(merge: true));
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+    update();
+  }
+
+  void unLikeComment(String id, Map<String, dynamic> comment, String uid) async {
+    try {
+      Map<String, dynamic> temp = comment.map((key, value) => MapEntry(key, value));
+      await _ref.doc(id).set({
+        "comments": FieldValue.arrayRemove([
+          comment
+        ])
+      }, SetOptions(merge: true));
+      List<DocumentReference> likes = temp['likes'].cast<DocumentReference>();
+      likes.removeWhere((element) => element == FirebaseFirestore.instance.collection("users").doc(uid));
+      temp["likes"] = likes;
+      await _ref.doc(id).set({
+        "comments": FieldValue.arrayUnion([
+          temp
+        ])
+      }, SetOptions(merge: true));
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+    update();
+  }
+
+  Future<void> comment(String id, Map<String, dynamic> comment) async {
+    log(comment.toString());
+    try {
+      _ref.doc(id).set({
+        "comments": FieldValue.arrayUnion([
+          comment
         ])
       }, SetOptions(merge: true));
     } on FirebaseException catch (e) {

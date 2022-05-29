@@ -277,18 +277,29 @@ class Post extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           GestureDetector(
-            onTap: () => Get.to(() => const PostDetails()),
+            onTap: () => Get.to(() => PostDetails(post: post)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Visibility(
+                  visible: post.caption.isNotEmpty,
+                  child: MyText(
+                    text: post.caption,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Visibility(
                   visible: post.photo.isNotEmpty,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: CachedNetworkImage(
-                      imageUrl: post.photo,
-                      height: 200,
-                      fit: BoxFit.cover,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl: post.photo,
+                        height: 200,
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
                 ),
@@ -296,13 +307,13 @@ class Post extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 15),
-          likeCommentShare(),
+          likeComment(),
         ],
       ),
     );
   }
 
-  Widget likeCommentShare() {
+  Widget likeComment() {
     final AuthController authController = Get.find();
     final user = authController.user.value!;
 

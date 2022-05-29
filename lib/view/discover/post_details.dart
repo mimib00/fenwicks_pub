@@ -1,14 +1,25 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/controller/discover_controller/post_details_controller.dart';
+import 'package:fenwicks_pub/controller/post_controller.dart';
+import 'package:fenwicks_pub/model/post.dart';
+import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/back_button.dart';
+import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:jiffy/jiffy.dart';
 
 class PostDetails extends StatelessWidget {
-  const PostDetails({Key? key}) : super(key: key);
+  final Posts post;
+  const PostDetails({
+    Key? key,
+    required this.post,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +42,10 @@ class PostDetails extends StatelessWidget {
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
-                        return CommentsTiles(
-                          isNewComment: index == 0 ? true : false,
-                          profileImage: kDummyUser,
-                          name: 'Michael Bruno',
-                          comment:
-                              'Cras gravida bibendum dolor eu varius. Ipsum fermentum velit nisl, eget vehicula.',
-                          time: '8h ago',
-                          like: 12,
-                        );
+                        final comment = post.comments[index];
+                        return CommentsTiles(comment: comment, id: post.id!);
                       },
-                      childCount: 10,
+                      childCount: post.comments.length,
                     ),
                   ),
                 ],
@@ -55,6 +59,10 @@ class PostDetails extends StatelessWidget {
   }
 
   Widget writeComment() {
+    final AuthController authController = Get.find();
+    final user = authController.user.value!;
+    final PostController postController = Get.find();
+    final TextEditingController controller = TextEditingController();
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -66,15 +74,35 @@ class PostDetails extends StatelessWidget {
           child: ListTile(
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(100),
-              child: Image.asset(
-                kDummyUser,
-                height: 47,
+              child: CachedNetworkImage(
+                imageUrl: user.photo,
+                fit: BoxFit.cover,
+                height: 50,
+                width: 50,
+                errorWidget: (_, __, ___) => const CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.black,
+                  child: Icon(
+                    Icons.person_rounded,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
             title: ClipRRect(
               borderRadius: BorderRadius.circular(50),
-              child: TextFormField(
+              child: TextField(
+                controller: controller,
                 cursorColor: kSecondaryColor,
+                onSubmitted: (value) {
+                  Map<String, dynamic> comment = {
+                    "owner": FirebaseFirestore.instance.collection("users").doc(user.id),
+                    "comment": value.trim(),
+                    "created_at": Timestamp.now(),
+                    "likes": [],
+                  };
+                  postController.comment(post.id!, comment).then((value) => controller.clear());
+                },
                 style: const TextStyle(
                   fontSize: 13,
                   fontFamily: 'Poppins',
@@ -111,252 +139,268 @@ class PostDetails extends StatelessWidget {
             children: [
               PageView.builder(
                 controller: controller.pageController,
-                itemCount: controller.getPostImage.length,
-                onPageChanged: (index) => controller.currentPage(index),
-                physics: const BouncingScrollPhysics(),
+                itemCount: 1,
+                physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) => ClipRRect(
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(15),
                     bottomRight: Radius.circular(15),
                   ),
-                  child: Image.asset(
-                    controller.getPostImage[index],
+                  child: CachedNetworkImage(
+                    imageUrl: post.photo,
                     fit: BoxFit.cover,
-                    height: Get.height,
+                    height: 300,
                     alignment: Alignment.bottomCenter,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 15,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: SmoothPageIndicator(
-                    controller: controller.pageController,
-                    // PageController
-                    count: controller.getPostImage.length,
-                    effect: WormEffect(
-                      dotHeight: 6.13,
-                      dotWidth: 6.13,
-                      dotColor: kWhiteColor.withOpacity(0.43),
-                      activeDotColor: kSecondaryColor,
-                    ),
-                    // your preferred effect
-                    onDotClicked: (index) => controller.currentPage(index),
                   ),
                 ),
               ),
             ],
           ),
         ),
-        likeCommentShare(),
+        likeComment(),
       ],
     );
   }
 
-  Widget likeCommentShare() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 20,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+  Widget likeComment() {
+    final AuthController authController = Get.find();
+    final user = authController.user.value!;
+
+    bool isLiked = post.likes.isNotEmpty ? post.likes.where((element) => element == FirebaseFirestore.instance.collection("users").doc(user.id)).isNotEmpty : false;
+
+    return GetBuilder<PostController>(
+      init: PostController(),
+      builder: (controller) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  Image.asset(
-                    kLike,
-                    color: kRedColor,
-                    height: 19.79,
+                  GestureDetector(
+                    onTap: () {
+                      if (isLiked) {
+                        controller.unLikePost(post.id!, user.id!);
+                      } else {
+                        controller.likePost(post.id!, user.id!);
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.favorite,
+                          size: 28,
+                          color: isLiked ? kRedColor : kSecondaryColor,
+                        ),
+                        MyText(
+                          text: post.likes.length.toString(),
+                          size: 12,
+                          paddingLeft: 5,
+                          paddingBottom: 5,
+                          color: kSecondaryColor,
+                          weight: FontWeight.w600,
+                          fontFamily: 'Poppins',
+                        ),
+                      ],
+                    ),
                   ),
-                  MyText(
-                    text: '247',
-                    size: 12,
-                    paddingLeft: 5,
-                    paddingBottom: 5,
-                    weight: FontWeight.w600,
-                    fontFamily: 'Poppins',
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 35,
+                    ),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          kComment,
+                          height: 19.95,
+                        ),
+                        MyText(
+                          text: post.comments.length.toString(),
+                          size: 12,
+                          paddingLeft: 5,
+                          paddingBottom: 5,
+                          color: kSecondaryColor,
+                          weight: FontWeight.w600,
+                          fontFamily: 'Poppins',
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 35,
+              // Image.asset(
+              //   kBookMark,
+              //   height: 21.83,
+              // ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.bookmark_outline,
+                  size: 28,
+                  color: kSecondaryColor,
                 ),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      kComment,
-                      height: 19.95,
-                    ),
-                    MyText(
-                      text: '57',
-                      size: 12,
-                      paddingLeft: 5,
-                      paddingBottom: 5,
-                      weight: FontWeight.w600,
-                      fontFamily: 'Poppins',
-                    ),
-                  ],
-                ),
-              ),
-              Row(
-                children: [
-                  Image.asset(
-                    kShare,
-                    height: 19.64,
-                  ),
-                  MyText(
-                    text: '33',
-                    size: 12,
-                    paddingLeft: 5,
-                    paddingBottom: 5,
-                    weight: FontWeight.w600,
-                    fontFamily: 'Poppins',
-                  ),
-                ],
               ),
             ],
           ),
-          Image.asset(
-            kBookMark,
-            height: 21.83,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
 // ignore: must_be_immutable
 class CommentsTiles extends StatelessWidget {
-  CommentsTiles({
+  final Map<String, dynamic> comment;
+  final String id;
+  const CommentsTiles({
     Key? key,
-    this.isNewComment = false,
-    this.profileImage,
-    this.name,
-    this.comment,
-    this.time,
-    this.like,
+    required this.comment,
+    required this.id,
   }) : super(key: key);
-  bool? isNewComment;
-  String? profileImage, name, comment, time;
-  int? like;
+
+  Future<Users> getOwner(DocumentReference<Map<String, dynamic>> ref) async {
+    Users? user;
+    try {
+      final info = await ref.get();
+      user = Users.fromJson(info.data()!, uid: info.id);
+    } on FirebaseException catch (e) {
+      Get.showSnackbar(errorCard(e.message!));
+    }
+    return user!;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 15,
-            vertical: 15,
-          ),
-          color: isNewComment == true
-              ? kGreyColor4.withOpacity(0.10)
-              : Colors.transparent,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+    return GetBuilder<PostController>(
+      init: PostController(),
+      builder: (controller) {
+        return FutureBuilder<Users>(
+          future: getOwner(comment["owner"]),
+          builder: (context, snapshot) {
+            if (snapshot.data == null) return Container();
+            final owner = snapshot.data!;
+            final likes = comment['likes'].cast<DocumentReference>();
+
+            final AuthController authController = Get.find();
+            final user = authController.user.value!;
+
+            bool isLiked = likes.isNotEmpty ? likes.where((element) => element == FirebaseFirestore.instance.collection("users").doc(user.id)).isNotEmpty : false;
+            return GestureDetector(
+              onDoubleTap: () {
+                if (isLiked) {
+                  controller.unLikeComment(id, comment, user.id!);
+                } else {
+                  controller.likeComment(id, comment, user.id!);
+                }
+              },
+              behavior: HitTestBehavior.opaque,
+              child: Column(
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(
-                      top: 10,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 15,
                     ),
-                    height: isNewComment == true ? 53.75 : 49,
-                    width: isNewComment == true ? 53.75 : 49,
-                    padding: EdgeInsets.all(isNewComment == true ? 0 : 2),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(
-                        color:
-                            isNewComment == true ? kWhiteColor : kSkyBlueColor,
-                        width: 2,
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: Image.asset(
-                        kDummyUser,
-                        height: Get.height,
-                      ),
-                    ),
-                  ),
-                  isNewComment == true
-                      ? const SizedBox()
-                      : Column(
+                    color: Colors.transparent,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const SizedBox(
-                              height: 7,
-                            ),
-                            Row(
-                              children: [
-                                Image.asset(
-                                  kLike,
-                                  color: kRedColor,
-                                  height: 10.53,
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: 10,
+                              ),
+                              height: 49,
+                              width: 49,
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(
+                                  color: kSkyBlueColor,
+                                  width: 2,
                                 ),
-                                MyText(
-                                  paddingLeft: 5,
-                                  text: '$like',
-                                  size: 9,
-                                  color: kSkyBlueColor2,
-                                  fontFamily: 'Poppins',
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(100),
+                                child: Image.asset(
+                                  kDummyUser,
+                                  height: Get.height,
+                                ),
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                const SizedBox(
+                                  height: 7,
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.favorite,
+                                      size: 15,
+                                      color: isLiked ? kRedColor : kSecondaryColor,
+                                    ),
+                                    MyText(
+                                      paddingLeft: 5,
+                                      text: likes.length,
+                                      size: 9,
+                                      color: kSkyBlueColor2,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ],
                         ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                MyText(
+                                  text: owner.name,
+                                  size: 17,
+                                  weight: FontWeight.w600,
+                                  fontFamily: 'Poppins',
+                                ),
+                                MyText(
+                                  paddingTop: 5,
+                                  text: comment["comment"],
+                                  size: 12,
+                                  color: kWhiteColor,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        MyText(
+                          text: Jiffy(comment["created_at"].toDate().toString()).fromNow(),
+                          size: 10,
+                          color: kWhiteColor.withOpacity(0.67),
+                          fontFamily: 'Poppins',
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                    height: 1,
+                    color: kSecondaryColor.withOpacity(0.22),
+                  ),
                 ],
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      MyText(
-                        text: '$name',
-                        size: 17,
-                        weight: FontWeight.w600,
-                        fontFamily: 'Poppins',
-                      ),
-                      MyText(
-                        paddingTop: 5,
-                        text: '$comment',
-                        size: 12,
-                        color: isNewComment == true
-                            ? kWhiteColor.withOpacity(0.58)
-                            : kWhiteColor,
-                        fontFamily: 'Poppins',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              MyText(
-                text: '$time',
-                size: 10,
-                color: kWhiteColor.withOpacity(0.67),
-                fontFamily: 'Poppins',
-              ),
-            ],
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-          height: 1,
-          color: kSecondaryColor.withOpacity(0.22),
-        ),
-      ],
+            );
+          },
+        );
+      },
     );
   }
 }

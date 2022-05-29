@@ -7,7 +7,7 @@ class Posts {
   final String caption;
   final String photo;
   final List likes;
-  final List comments;
+  final List<Map<String, dynamic>> comments;
   final Timestamp createdAt;
 
   Posts(
@@ -26,7 +26,7 @@ class Posts {
       data["caption"],
       data["photo"],
       data["likes"],
-      data["comments"],
+      data["comments"].cast<Map<String, dynamic>>(),
       data["created_at"],
       id: id,
     );
