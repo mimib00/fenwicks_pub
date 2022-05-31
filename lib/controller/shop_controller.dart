@@ -21,7 +21,7 @@ class ShopController extends GetxController {
 
   String address = '';
 
-  RxBool isCash = false.obs;
+  RxString payment = 'card'.obs;
 
   Map<String, dynamic> orderData = {};
 
@@ -67,8 +67,8 @@ class ShopController extends GetxController {
 
   void selectAddress(String addr) => address = addr;
 
-  void selectPayment(bool value) {
-    isCash.value = value;
+  void selectPayment(String value) {
+    payment.value = value;
     update();
   }
 
@@ -83,7 +83,7 @@ class ShopController extends GetxController {
       items.add(item.toMap());
     }
 
-    if (!isCash.value) {
+    if (payment.value == "card") {
       await _useStripe();
       return;
     }
@@ -105,6 +105,12 @@ class ShopController extends GetxController {
         "data": orderInfo.data()!,
         "id": orderInfo.id
       };
+
+      for (var order in temp) {
+        await _ref.doc(order.product.id).update({
+          "quantity": order.product.qty - order.quantity
+        });
+      }
 
       auth.updateUserData({
         "orders": FieldValue.arrayUnion([
@@ -165,6 +171,11 @@ class ShopController extends GetxController {
       };
 
       final order = await ref.add(data);
+      for (var order in temp) {
+        await _ref.doc(order.product.id).update({
+          "quantity": order.product.qty - order.quantity
+        });
+      }
       final orderInfo = await order.get();
       orderData = {
         "data": orderInfo.data()!,

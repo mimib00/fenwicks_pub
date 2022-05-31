@@ -42,9 +42,7 @@ class Payment extends StatelessWidget {
                 weight: FontWeight.w700,
                 fontFamily: 'Poppins',
               ),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               Theme(
                 data: Theme.of(context).copyWith(
                   highlightColor: Colors.transparent,
@@ -53,25 +51,48 @@ class Payment extends StatelessWidget {
                 ),
                 child: ListTile(
                   contentPadding: EdgeInsets.zero,
-                  onTap: () => controller.selectPayment(false),
+                  onTap: () => controller.selectPayment("card"),
                   title: MyText(
                     text: 'Debit Card',
                     size: 18,
                     weight: FontWeight.w700,
                     fontFamily: 'Poppins',
                   ),
-                  trailing: Radio<bool>(
+                  trailing: Radio<String>(
                     toggleable: true,
-                    value: false,
-                    groupValue: controller.isCash.value,
+                    value: 'card',
+                    groupValue: controller.payment.value,
                     activeColor: kSecondaryColor,
-                    onChanged: (value) => controller.selectPayment(false),
+                    onChanged: (value) => controller.selectPayment(value!),
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 25,
+              const SizedBox(height: 25),
+              Theme(
+                data: Theme.of(context).copyWith(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  unselectedWidgetColor: kWhiteColor,
+                ),
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () => controller.selectPayment("points"),
+                  title: MyText(
+                    text: 'Reward Points',
+                    size: 18,
+                    weight: FontWeight.w700,
+                    fontFamily: 'Poppins',
+                  ),
+                  trailing: Radio<String>(
+                    toggleable: true,
+                    value: "points",
+                    groupValue: controller.payment.value,
+                    activeColor: kSecondaryColor,
+                    onChanged: (value) => controller.selectPayment(value!),
+                  ),
+                ),
               ),
+              const SizedBox(height: 25),
               Image.asset(kOr),
               const SizedBox(
                 height: 15,
@@ -84,19 +105,19 @@ class Payment extends StatelessWidget {
                 ),
                 child: ListTile(
                   contentPadding: EdgeInsets.zero,
-                  onTap: () => controller.selectPayment(true),
+                  onTap: () => controller.selectPayment('cash'),
                   title: MyText(
                     text: 'Cash on delivery',
                     size: 18,
                     weight: FontWeight.w700,
                     fontFamily: 'Poppins',
                   ),
-                  trailing: Radio<bool>(
+                  trailing: Radio<String>(
                     toggleable: true,
-                    value: true,
-                    groupValue: controller.isCash.value,
+                    value: 'cash',
+                    groupValue: controller.payment.value,
                     activeColor: kSecondaryColor,
-                    onChanged: (value) => controller.selectPayment(true),
+                    onChanged: (value) => controller.selectPayment(value!),
                   ),
                 ),
               ),
@@ -112,7 +133,6 @@ class Payment extends StatelessWidget {
             buttonText: 'DONE',
             onOrderTap: () {
               controller.order();
-              // Get.toNamed(AppLinks.purchaseSuccessful);
             },
           ),
         );
