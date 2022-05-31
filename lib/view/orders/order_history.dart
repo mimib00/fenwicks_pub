@@ -52,11 +52,13 @@ class _OrderHistoryState extends State<OrderHistory> {
   @override
   void initState() {
     init();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final reversed = List.from(orders.reversed);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -69,9 +71,9 @@ class _OrderHistoryState extends State<OrderHistory> {
         ),
       ),
       body: ListView.builder(
-        itemCount: orders.length,
+        itemCount: reversed.length,
         itemBuilder: (context, index) {
-          final order = orders[index];
+          final order = reversed[index];
           return _OrderTile(order: order);
         },
       ),
