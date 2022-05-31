@@ -126,6 +126,7 @@ class Payment extends StatelessWidget {
               ),
               OrderBillingInfo(
                 totalCost: controller.getCartTotal(),
+                totalPoints: controller.getPointTotal(),
               ),
             ],
           ),

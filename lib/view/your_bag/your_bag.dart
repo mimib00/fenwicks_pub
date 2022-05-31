@@ -40,6 +40,7 @@ class YourBag extends StatelessWidget {
             ),
             OrderBillingInfo(
               totalCost: controller.getCartTotal(),
+              totalPoints: controller.getPointTotal(),
             ),
           ],
         ),

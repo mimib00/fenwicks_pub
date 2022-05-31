@@ -5,13 +5,14 @@ import 'my_text.dart';
 
 // ignore: must_be_immutable
 class OrderBillingInfo extends StatelessWidget {
-  OrderBillingInfo({
+  const OrderBillingInfo({
     Key? key,
     this.totalCost,
+    this.totalPoints,
   }) : super(key: key);
 
-  double? totalCost;
-
+  final double? totalCost;
+  final int? totalPoints;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,6 +45,22 @@ class OrderBillingInfo extends StatelessWidget {
               ),
               MyText(
                 text: '\$$totalCost',
+                size: 12,
+                weight: FontWeight.w700,
+                fontFamily: 'Poppins',
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              MyText(
+                text: 'Total Points Cost',
+                size: 12,
+                fontFamily: 'Poppins',
+              ),
+              MyText(
+                text: totalPoints.toString(),
                 size: 12,
                 weight: FontWeight.w700,
                 fontFamily: 'Poppins',

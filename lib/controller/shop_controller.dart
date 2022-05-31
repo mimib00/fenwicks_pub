@@ -65,6 +65,14 @@ class ShopController extends GetxController {
     return price;
   }
 
+  int getPointTotal() {
+    int price = 0;
+    for (var order in cart) {
+      price += (order.product.points * order.quantity);
+    }
+    return price;
+  }
+
   void selectAddress(String addr) => address = addr;
 
   void selectPayment(String value) {
@@ -85,6 +93,11 @@ class ShopController extends GetxController {
 
     if (payment.value == "card") {
       await _useStripe();
+      return;
+    }
+
+    if (payment.value == "points") {
+      await _usePoints();
       return;
     }
 
@@ -145,7 +158,6 @@ class ShopController extends GetxController {
       );
 
       final paymentIntentData = jsonDecode(response.body);
-      Get.back(closeOverlays: true);
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           customerId: paymentIntentData['customer'],
@@ -193,6 +205,53 @@ class ShopController extends GetxController {
       } else {
         Get.showSnackbar(errorCard("Unforeseen error: $e"));
       }
+    }
+  }
+
+  /// push an order request using points.
+  Future<void> _usePoints() async {
+    final CollectionReference<Map<String, dynamic>> ref = FirebaseFirestore.instance.collection("orders");
+    final AuthController auth = Get.find();
+    final user = auth.user.value!;
+    List<Map<String, dynamic>> items = [];
+    var temp = cart.where((p0) => p0.quantity > 0).toList();
+
+    try {
+      if (user.points <= getPointTotal()) {
+        throw "Not Enough points";
+      }
+      Map<String, dynamic> data = {
+        "owner": FirebaseFirestore.instance.collection("users").doc(user.id),
+        "created_at": FieldValue.serverTimestamp(),
+        "address": address,
+        "method": "points",
+        "status": "pending",
+        "total": getPointTotal(),
+        "products": items,
+      };
+
+      // make order
+      final order = await ref.add(data);
+      final orderInfo = await order.get();
+      orderData = {
+        "data": orderInfo.data()!,
+        "id": orderInfo.id
+      };
+      // take qty
+      for (var order in temp) {
+        await _ref.doc(order.product.id).update({
+          "quantity": order.product.qty - order.quantity
+        });
+      }
+      // take off points add order to user.
+      auth.updateUserData({
+        "points": user.points - getPointTotal(),
+        "orders": FieldValue.arrayUnion([
+          ref.doc(orderInfo.id)
+        ])
+      });
+    } catch (e) {
+      Get.showSnackbar(errorCard(e.toString()));
     }
   }
 
