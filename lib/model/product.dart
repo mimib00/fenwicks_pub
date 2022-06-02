@@ -7,6 +7,7 @@ class Product {
   final int rating;
   final int servings;
   final int points;
+  final int bounus;
   final int qty;
 
   Product(
@@ -19,6 +20,7 @@ class Product {
     this.servings,
     this.qty,
     this.points,
+    this.bounus,
   );
 
   factory Product.fromJson(Map<String, dynamic> data, String uid) {
@@ -31,7 +33,8 @@ class Product {
       data["rating"],
       data["servings"],
       data["quantity"],
-      data["points"],
+      int.parse(data["points"].toString()),
+      int.parse(data["bounus"].toString()),
     );
   }
 

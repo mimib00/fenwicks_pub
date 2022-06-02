@@ -119,7 +119,10 @@ class ShopController extends GetxController {
         "id": orderInfo.id
       };
 
-      for (var order in temp) {
+      for (Order order in temp) {
+        FirebaseFirestore.instance.collection("users").doc(user.id).update({
+          "points": user.points + order.product.bounus
+        });
         await _ref.doc(order.product.id).update({
           "quantity": order.product.qty - order.quantity
         });
@@ -184,6 +187,9 @@ class ShopController extends GetxController {
 
       final order = await ref.add(data);
       for (var order in temp) {
+        FirebaseFirestore.instance.collection("users").doc(user.id).update({
+          "points": user.points + order.product.bounus
+        });
         await _ref.doc(order.product.id).update({
           "quantity": order.product.qty - order.quantity
         });
@@ -239,6 +245,9 @@ class ShopController extends GetxController {
       };
       // take qty
       for (var order in temp) {
+        FirebaseFirestore.instance.collection("users").doc(user.id).update({
+          "points": (user.points - getPointTotal()) + order.product.bounus
+        });
         await _ref.doc(order.product.id).update({
           "quantity": order.product.qty - order.quantity
         });
