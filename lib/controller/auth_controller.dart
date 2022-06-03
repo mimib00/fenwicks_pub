@@ -5,6 +5,7 @@ import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,6 +15,7 @@ import '../routes/routes.dart';
 class AuthController extends GetxController {
   final _ref = FirebaseFirestore.instance.collection("users");
   final storageRef = FirebaseStorage.instance.ref();
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   Rx<Users?> user = Rx<Users?>(null);
 
@@ -171,7 +173,20 @@ class AuthController extends GetxController {
         if (user != null) {
           if (emailVerified(user)) {
             // got to home.
-            getUserData(user.uid).then((value) => Get.offAllNamed(AppLinks.events));
+            getUserData(user.uid).then((value) async {
+              messaging.onTokenRefresh.listen((token) async {
+                await updateUserData({
+                  "token": token
+                });
+              });
+              final token = await messaging.getToken();
+
+              await updateUserData({
+                "token": token
+              });
+
+              Get.offAllNamed(AppLinks.events);
+            });
           } else {
             // stay in login.
             Get.showSnackbar(errorCard("Please check your email."));

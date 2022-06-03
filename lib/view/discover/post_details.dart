@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
-import 'package:fenwicks_pub/controller/discover_controller/post_details_controller.dart';
 import 'package:fenwicks_pub/controller/post_controller.dart';
 import 'package:fenwicks_pub/model/post.dart';
 import 'package:fenwicks_pub/model/users.dart';
@@ -23,38 +22,33 @@ class PostDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<PostDetailsController>(
-      init: PostDetailsController(),
-      builder: (controller) {
-        return Scaffold(
-          body: Stack(
-            children: [
-              CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                slivers: [
-                  SliverAppBar(
-                    leading: backButton(),
-                    expandedHeight: 410,
-                    floating: true,
-                    flexibleSpace: postImages(controller),
-                  ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                        final comment = post.comments[index];
-                        return CommentsTiles(comment: comment, id: post.id!);
-                      },
-                      childCount: post.comments.length,
-                    ),
-                  ),
-                ],
+    return Scaffold(
+      body: Stack(
+        children: [
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            shrinkWrap: true,
+            slivers: [
+              SliverAppBar(
+                leading: backButton(),
+                expandedHeight: 410,
+                floating: true,
+                flexibleSpace: postImages(),
               ),
-              writeComment(),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    final comment = post.comments[index];
+                    return CommentsTiles(comment: comment, id: post.id!);
+                  },
+                  childCount: post.comments.length,
+                ),
+              ),
             ],
           ),
-        );
-      },
+          writeComment(),
+        ],
+      ),
     );
   }
 
@@ -131,14 +125,14 @@ class PostDetails extends StatelessWidget {
     );
   }
 
-  Widget postImages(PostDetailsController controller) {
+  Widget postImages() {
     return Column(
       children: [
         Expanded(
           child: Stack(
             children: [
               PageView.builder(
-                controller: controller.pageController,
+                controller: PageController(),
                 itemCount: 1,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) => ClipRRect(
