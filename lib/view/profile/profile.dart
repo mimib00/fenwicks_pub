@@ -20,210 +20,195 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AuthController>(builder: (controller) {
-      final user = controller.user.value!;
+    return GetBuilder<AuthController>(
+      builder: (controller) {
+        final user = controller.user.value!;
 
-      user.history.sort(
-        (a, b) {
-          if (a["date"] == null || b["date"] == null) return 0;
-          final first = a["date"] as Timestamp;
-          final second = b["date"] as Timestamp;
+        user.history.sort(
+          (a, b) {
+            if (a["date"] == null || b["date"] == null) return 0;
+            final first = a["date"] as Timestamp;
+            final second = b["date"] as Timestamp;
 
-          return first.compareTo(second);
-        },
-      );
+            return first.compareTo(second);
+          },
+        );
 
-      final history = user.history;
-      return Scaffold(
-        body: Stack(
-          children: [
-            Container(
-              height: Get.height,
-              width: Get.width,
-              padding: const EdgeInsets.only(
-                top: 35,
-              ),
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(kBlurEffect),
-                  alignment: Alignment.topCenter,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: () => Get.back(),
-                          icon: Image.asset(
-                            kArrowBack,
-                            color: kWhiteColor,
-                            height: 14.25,
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: Wrap(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: Image.asset(
-                            kNotificationIcon,
-                            height: 20,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Image.asset(
-                            kMenuIcon,
-                            height: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-                      if (image == null) return;
-                      controller.updateUserPhoto(image);
-                    },
-                    behavior: HitTestBehavior.opaque,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(360),
-                      child: CachedNetworkImage(
-                        imageUrl: user.photo,
-                        fit: BoxFit.cover,
-                        height: 150,
-                        width: 150,
-                        errorWidget: (_, __, ___) => const CircleAvatar(
-                          radius: 60,
-                          backgroundColor: kPrimaryColor,
-                          child: Icon(
-                            Icons.person_rounded,
-                            size: 60,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  MyText(
-                    paddingTop: 20,
-                    text: user.name,
-                    size: 21,
-                    weight: FontWeight.w700,
-                    fontFamily: 'Poppins',
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              top: 280,
-              child: Container(
+        final history = user.history;
+        return Scaffold(
+          body: Stack(
+            children: [
+              Container(
                 height: Get.height,
                 width: Get.width,
+                padding: const EdgeInsets.only(
+                  top: 35,
+                ),
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(kClippedEffect),
+                    image: AssetImage(kBlurEffect),
                     alignment: Alignment.topCenter,
                     fit: BoxFit.cover,
                   ),
                 ),
-                child: ListView(
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 20,
-                  ),
+                child: Column(
                   children: [
-                    const SizedBox(
-                      height: 80,
-                    ),
-
-                    ProfileTiles(
-                      title: 'Name',
-                      field: "name",
-                      value: user.name,
-                    ),
-                    ProfileTiles(
-                      title: 'Email',
-                      field: "email",
-                      value: user.email,
-                    ),
-                    // ProfileTiles(
-                    //   controller: tabController,
-                    //   title: 'Password',
-                    //   value: '*********',
-                    //   onTap: () {
-                    //     tabController.animateTo(1);
-                    //     setState(() {
-                    //       _title = "Change Password";
-                    //       _label = "New Password";
-                    //       _field = "password";
-                    //     });
-                    //   },
-                    // ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ListTile(
+                      leading: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          MyText(
-                            text: 'Reward History',
-                            size: 16,
-                            weight: FontWeight.w700,
-                          ),
-                          GestureDetector(
-                            onTap: () => Get.toNamed(AppLinks.rewardHistory),
-                            child: MyText(
-                              text: 'View All',
-                              size: 11,
+                          IconButton(
+                            onPressed: () => Get.back(),
+                            icon: Image.asset(
+                              kArrowBack,
+                              color: kWhiteColor,
+                              height: 14.25,
                             ),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(
-                      height: 40,
+                      height: 15,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                      ),
-                      child: totalRewardPoints(user.points),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: history.length > 5 ? 5 : history.length,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20,
-                      ),
-                      itemBuilder: (context, index) {
-                        final date = history[index]["date"] as Timestamp;
-                        final doc = history[index]["event"] as DocumentReference<Map<String, dynamic>>;
-                        return PRewardHistoryTiles(date: date.toDate(), doc: doc);
+                    GestureDetector(
+                      onTap: () async {
+                        final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                        if (image == null) return;
+                        controller.updateUserPhoto(image);
                       },
+                      behavior: HitTestBehavior.opaque,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(360),
+                        child: CachedNetworkImage(
+                          imageUrl: user.photo,
+                          fit: BoxFit.cover,
+                          height: 150,
+                          width: 150,
+                          errorWidget: (_, __, ___) => const CircleAvatar(
+                            radius: 60,
+                            backgroundColor: kPrimaryColor,
+                            child: Icon(
+                              Icons.person_rounded,
+                              size: 60,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    const SizedBox(
-                      height: 250,
+                    MyText(
+                      paddingTop: 20,
+                      text: user.name,
+                      size: 21,
+                      weight: FontWeight.w700,
+                      fontFamily: 'Poppins',
                     ),
                   ],
                 ),
               ),
-            )
-          ],
-        ),
-      );
-    });
+              Positioned(
+                top: 280,
+                child: Container(
+                  height: Get.height,
+                  width: Get.width,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(kClippedEffect),
+                      alignment: Alignment.topCenter,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: ListView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                    ),
+                    children: [
+                      const SizedBox(
+                        height: 80,
+                      ),
+
+                      ProfileTiles(
+                        title: 'Name',
+                        field: "name",
+                        value: user.name,
+                      ),
+                      ProfileTiles(
+                        title: 'Email',
+                        field: "email",
+                        value: user.email,
+                      ),
+                      // ProfileTiles(
+                      //   controller: tabController,
+                      //   title: 'Password',
+                      //   value: '*********',
+                      //   onTap: () {
+                      //     tabController.animateTo(1);
+                      //     setState(() {
+                      //       _title = "Change Password";
+                      //       _label = "New Password";
+                      //       _field = "password";
+                      //     });
+                      //   },
+                      // ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            MyText(
+                              text: 'Reward History',
+                              size: 16,
+                              weight: FontWeight.w700,
+                            ),
+                            GestureDetector(
+                              onTap: () => Get.toNamed(AppLinks.rewardHistory),
+                              child: MyText(
+                                text: 'View All',
+                                size: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                        ),
+                        child: totalRewardPoints(user.points),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: history.length > 5 ? 5 : history.length,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                        ),
+                        itemBuilder: (context, index) {
+                          if (history[index].isEmpty) return Container();
+                          final date = history[index]["date"] as Timestamp;
+                          final doc = history[index]["event"] as DocumentReference<Map<String, dynamic>>;
+                          return PRewardHistoryTiles(date: date.toDate(), doc: doc);
+                        },
+                      ),
+                      const SizedBox(
+                        height: 250,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 

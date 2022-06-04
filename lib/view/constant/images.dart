@@ -1,4 +1,3 @@
-
 const kLogo = 'assets/images/logo.png';
 const kMainLogo = 'assets/images/main_logo.png';
 const kIntroBg = 'assets/images/intro_bg.png';

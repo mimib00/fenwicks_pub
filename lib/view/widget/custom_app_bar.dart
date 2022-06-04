@@ -48,16 +48,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   height: 20,
                 ),
               ),
-        IconButton(
-          onPressed: () {},
-          icon: Image.asset(
-            kMenuIcon,
-            height: 20,
-          ),
-        ),
-        const SizedBox(
-          width: 5,
-        ),
+        const SizedBox(width: 5),
       ],
     );
   }

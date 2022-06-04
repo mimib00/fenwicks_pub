@@ -1,7 +1,6 @@
 import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/constant/app_styling.dart';
-import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/my_button.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
@@ -130,15 +129,6 @@ class SignUp extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          MyText(
-            onTap: () {},
-            align: TextAlign.center,
-            text: 'Continue As A Guest',
-            size: 16,
-            color: kSecondaryColor,
-            weight: FontWeight.w700,
-            decoration: TextDecoration.underline,
           ),
         ],
       ),

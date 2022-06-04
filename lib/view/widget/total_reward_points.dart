@@ -1,6 +1,6 @@
-import 'package:fenwicks_pub/view/claim_your_reward/claim_your_reward.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
+import 'package:fenwicks_pub/view/reward_history/reward_history.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,7 +12,7 @@ Widget totalRewardPoints(int points) {
     children: [
       GestureDetector(
         onTap: () => Get.to(
-          () => const ClaimYourReward(),
+          () => const RewardHistory(),
         ),
         child: Container(
           height: 50,

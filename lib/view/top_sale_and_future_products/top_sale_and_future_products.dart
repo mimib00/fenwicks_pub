@@ -1,6 +1,5 @@
 import 'package:fenwicks_pub/controller/shop_controller.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
-import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/drawer/my_drawer.dart';
 import 'package:fenwicks_pub/view/widget/bear_glass_widget.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
@@ -28,25 +27,6 @@ class TopSaleAndFutureProducts extends StatelessWidget {
             size: 19,
             weight: FontWeight.w900,
             fontFamily: 'Poppins',
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 35,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: searchBox(),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Image.asset(
-                  kFilterIcon,
-                  height: 49,
-                ),
-              ],
-            ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

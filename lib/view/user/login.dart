@@ -1,5 +1,4 @@
 import 'package:fenwicks_pub/view/constant/app_styling.dart';
-import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/my_button.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
@@ -67,16 +66,7 @@ class Login extends StatelessWidget {
             },
             text: 'sign in',
           ),
-          MyText(
-            onTap: () {},
-            paddingTop: 20,
-            paddingBottom: 25,
-            align: TextAlign.right,
-            text: 'Forgot Password?',
-            size: 16,
-            color: kSecondaryColor,
-            fontFamily: 'Open Sans',
-          ),
+          const SizedBox(height: 45),
           Image.asset(kOr),
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -107,15 +97,6 @@ class Login extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          MyText(
-            onTap: () {},
-            align: TextAlign.center,
-            text: 'Continue As A Guest',
-            size: 16,
-            color: kSecondaryColor,
-            weight: FontWeight.w700,
-            decoration: TextDecoration.underline,
           ),
         ],
       ),

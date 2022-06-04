@@ -1,6 +1,4 @@
 import 'package:fenwicks_pub/view/address/address.dart';
-import 'package:fenwicks_pub/view/claim_your_reward/claim_your_reward.dart';
-import 'package:fenwicks_pub/view/claim_your_reward/verify_password.dart';
 import 'package:fenwicks_pub/view/discover/discover.dart';
 import 'package:fenwicks_pub/view/events/events.dart';
 import 'package:fenwicks_pub/view/events/events_detail_view.dart';
@@ -65,14 +63,6 @@ class AppRoutes {
       page: () => const PurchaseSuccessful(),
     ),
     GetPage(
-      name: AppLinks.claimYourReward,
-      page: () => const ClaimYourReward(),
-    ),
-    GetPage(
-      name: AppLinks.verifyPassword,
-      page: () => const VerifyPassword(),
-    ),
-    GetPage(
       name: AppLinks.profile,
       page: () => Profile(),
     ),
@@ -107,8 +97,6 @@ class AppLinks {
   static const address = '/address';
   static const payment = '/payment';
   static const purchaseSuccessful = '/purchase_successful';
-  static const claimYourReward = '/claim_your_reward';
-  static const verifyPassword = '/verify_password';
   static const profile = '/profile';
   static const discoverProfile = '/discover_profile';
   static const discover = '/discover';
