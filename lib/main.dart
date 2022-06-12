@@ -16,8 +16,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.instance.subscribeToTopic('all');
 
-  Stripe.publishableKey = "pk_test_51L2iF5BCBx7eZ7I9hZ9P0kxUNABlNR9agT099DBfLkQb9woXnkDllth7kMOjMlfDuvNBZPulYHc9iejgNtpKeVhN00UtdY7Obg";
+  Stripe.publishableKey =
+      "pk_test_51L2iF5BCBx7eZ7I9hZ9P0kxUNABlNR9agT099DBfLkQb9woXnkDllth7kMOjMlfDuvNBZPulYHc9iejgNtpKeVhN00UtdY7Obg";
   return runApp(const MyApp());
 }
 
