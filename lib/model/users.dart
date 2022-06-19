@@ -29,8 +29,11 @@ class Users {
 
   factory Users.fromJson(Map<String, dynamic> data, {String? uid}) {
     final map = data["history"] == null ? <Map<String, dynamic>>[] : data["history"].cast<Map<String, dynamic>>();
-    final order = data["orders"] == null ? <DocumentReference<Map<String, dynamic>>>[] : data["orders"].cast<DocumentReference<Map<String, dynamic>>>();
-    List<Map<String, dynamic>> addresses = data["address"].cast<Map<String, dynamic>>();
+    final order = data["orders"] == null
+        ? <DocumentReference<Map<String, dynamic>>>[]
+        : data["orders"].cast<DocumentReference<Map<String, dynamic>>>();
+    List<Map<String, dynamic>> addresses =
+        data["address"] == null ? <Map<String, dynamic>>[] : data["address"].cast<Map<String, dynamic>>();
 
     return Users(
       data["name"] ?? '',
@@ -40,8 +43,12 @@ class Users {
       data["photo"] ?? '',
       map,
       order,
-      data["posts"] != null ? data["posts"].cast<DocumentReference<Map<String, dynamic>>>() : <DocumentReference<Map<String, dynamic>>>[],
-      data["saved"] != null ? data["saved"].cast<DocumentReference<Map<String, dynamic>>>() : <DocumentReference<Map<String, dynamic>>>[],
+      data["posts"] != null
+          ? data["posts"].cast<DocumentReference<Map<String, dynamic>>>()
+          : <DocumentReference<Map<String, dynamic>>>[],
+      data["saved"] != null
+          ? data["saved"].cast<DocumentReference<Map<String, dynamic>>>()
+          : <DocumentReference<Map<String, dynamic>>>[],
       address: addresses,
       id: uid,
     );
