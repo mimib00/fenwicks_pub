@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAMN10JtGxI1pL7l-0VEn7bGYBfRtODD2g',
-    appId: '1:968413471908:android:fa2b34d0e0f011e7a27231',
+    appId: '1:968413471908:android:705a8f879d2a9349a27231',
     messagingSenderId: '968413471908',
     projectId: 'fenwicks-pub',
     storageBucket: 'fenwicks-pub.appspot.com',
@@ -59,7 +59,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBRoKXgTF2QA55PgRqNF5BSIRuD7EKzjcY',
-    appId: '1:968413471908:ios:986822f128373a8aa27231',
+    appId: '1:968413471908:ios:ab9b8d6b2ea4ca7ca27231',
     messagingSenderId: '968413471908',
     projectId: 'fenwicks-pub',
     storageBucket: 'fenwicks-pub.appspot.com',

@@ -30,7 +30,7 @@ class Events extends StatelessWidget {
           controller.getComingEvents();
         }
         final events = controller.events;
-        if (events.isEmpty) return Container();
+
         return MyDrawer(
           child: ListView(
             physics: const BouncingScrollPhysics(),
@@ -116,16 +116,18 @@ class Events extends StatelessWidget {
                       ],
                     ),
                   ),
-                  ListView.builder(
-                    itemCount: events.length > 4 ? 4 : events.length,
-                    shrinkWrap: true,
-                    physics: const BouncingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      var data = events[index];
+                  events.isEmpty
+                      ? Container()
+                      : ListView.builder(
+                          itemCount: events.length > 4 ? 4 : events.length,
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            var data = events[index];
 
-                      return RecentEventsWidget(event: data);
-                    },
-                  )
+                            return RecentEventsWidget(event: data);
+                          },
+                        )
                 ],
               ),
               Column(

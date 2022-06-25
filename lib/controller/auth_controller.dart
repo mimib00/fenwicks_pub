@@ -101,9 +101,7 @@ class AuthController extends GetxController {
   void removeAddress(Map<String, dynamic> address) async {
     try {
       await _ref.doc(user.value!.id!).update({
-        "address": FieldValue.arrayRemove([
-          address
-        ]),
+        "address": FieldValue.arrayRemove([address]),
       });
       await getUserData(user.value!.id!);
     } on FirebaseException catch (e) {
@@ -150,12 +148,12 @@ class AuthController extends GetxController {
     Get.dialog(const LoadingCard(), barrierDismissible: false);
     try {
       TaskSnapshot snapshot = await storageRef.child(path).putFile(File(image.path));
-      if (snapshot.state == TaskState.error || snapshot.state == TaskState.canceled) throw "There was an error durring upload";
+      if (snapshot.state == TaskState.error || snapshot.state == TaskState.canceled) {
+        throw "There was an error durring upload";
+      }
       if (snapshot.state == TaskState.success) {
         var imageUrl = await snapshot.ref.getDownloadURL();
-        Map<String, dynamic> data = {
-          "photo": imageUrl
-        };
+        Map<String, dynamic> data = {"photo": imageUrl};
 
         updateUserData(data);
       }
@@ -175,15 +173,11 @@ class AuthController extends GetxController {
             // got to home.
             getUserData(user.uid).then((value) async {
               messaging.onTokenRefresh.listen((token) async {
-                await updateUserData({
-                  "token": token
-                });
+                await updateUserData({"token": token});
               });
               final token = await messaging.getToken();
 
-              await updateUserData({
-                "token": token
-              });
+              await updateUserData({"token": token});
 
               Get.offAllNamed(AppLinks.events);
             });

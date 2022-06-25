@@ -7,7 +7,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:968413471908:android:fa2b34d0e0f011e7a27231",
+        "mobilesdk_app_id": "1:968413471908:android:705a8f879d2a9349a27231",
         "android_client_info": {
           "package_name": "com.fenwicks.pub"
         }
@@ -29,6 +29,13 @@
             {
               "client_id": "968413471908-ga0qhliouukhilrucp6gttfql7oitebh.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "968413471908-vn9mb9lqq2cbqk2a1f1gc07jt8to4e11.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fenwicksPub"
+              }
             }
           ]
         }
