@@ -15,8 +15,9 @@ class OrderDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = order["data"];
+    final data = order["data"] ?? order;
     final id = order["id"];
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

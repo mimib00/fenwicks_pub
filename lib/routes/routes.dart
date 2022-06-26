@@ -4,6 +4,7 @@ import 'package:fenwicks_pub/view/events/events.dart';
 import 'package:fenwicks_pub/view/events/events_detail_view.dart';
 import 'package:fenwicks_pub/view/launch/new_get_started.dart';
 import 'package:fenwicks_pub/view/launch/splash_screen.dart';
+import 'package:fenwicks_pub/view/notifications/notification_screen.dart';
 import 'package:fenwicks_pub/view/orders/order_history.dart';
 import 'package:fenwicks_pub/view/payment/payment.dart';
 import 'package:fenwicks_pub/view/payment/purchase_successful.dart';
@@ -82,6 +83,10 @@ class AppRoutes {
       name: AppLinks.orderHistory,
       page: () => const OrderHistory(),
     ),
+    GetPage(
+      name: AppLinks.notifications,
+      page: () => const NotificationScreen(),
+    ),
   ];
 }
 
@@ -102,4 +107,5 @@ class AppLinks {
   static const discover = '/discover';
   static const rewardHistory = '/reward_history';
   static const orderHistory = '/orders';
+  static const notifications = '/notifications';
 }

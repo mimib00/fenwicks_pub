@@ -106,6 +106,10 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
                   AppLinks.orderHistory,
                 ),
               ),
+              DrawerTiles(
+                title: 'Notifications',
+                onTap: () => Get.toNamed(AppLinks.notifications),
+              ),
             ],
           ),
           Column(
