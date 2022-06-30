@@ -130,11 +130,9 @@ class BagTiles extends StatelessWidget {
                             controller.changeQuantity(order, -1);
                           },
                           behavior: HitTestBehavior.opaque,
-                          child: Expanded(
-                            child: Image.asset(
-                              kRemoveIcon,
-                              height: 3,
-                            ),
+                          child: Image.asset(
+                            kRemoveIcon,
+                            height: 3,
                           ),
                         ),
                         MyText(
@@ -148,11 +146,9 @@ class BagTiles extends StatelessWidget {
                             controller.changeQuantity(order, 1);
                           },
                           behavior: HitTestBehavior.opaque,
-                          child: Expanded(
-                            child: Image.asset(
-                              kAddIcon,
-                              height: 10,
-                            ),
+                          child: Image.asset(
+                            kAddIcon,
+                            height: 10,
                           ),
                         ),
                       ],
