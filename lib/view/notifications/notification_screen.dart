@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
-import 'package:fenwicks_pub/model/order.dart';
 import 'package:fenwicks_pub/model/users.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/orders/order_details.dart';
@@ -88,7 +87,7 @@ class NotificationTile extends StatelessWidget {
         future: notification.order != null ? getOrder(notification.order!) : null,
         builder: (context, snapshot) {
           if (snapshot.data == null && notification.order != null) return Container();
-          print(snapshot.data);
+
           return ListTile(
             onTap: notification.order == null ? null : () => Get.to(() => OrderDetails(order: snapshot.data!)),
             enableFeedback: notification.order != null,

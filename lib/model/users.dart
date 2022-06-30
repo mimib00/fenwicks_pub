@@ -37,9 +37,12 @@ class Users {
     List<Map<String, dynamic>> addresses =
         data["address"] == null ? <Map<String, dynamic>>[] : data["address"].cast<Map<String, dynamic>>();
     List<Notifications> notifi = [];
-    for (var notificate in data["notifications"]) {
-      notifi.add(Notifications.fromJson(notificate));
+    if (data["notifications"] != null) {
+      for (var notificate in data["notifications"]) {
+        notifi.add(Notifications.fromJson(notificate));
+      }
     }
+
     return Users(
       data["name"] ?? '',
       data["email"] ?? '',
