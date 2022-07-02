@@ -19,7 +19,7 @@ void main() async {
   FirebaseMessaging.instance.subscribeToTopic('all');
 
   Stripe.publishableKey =
-      "pk_test_51L2iF5BCBx7eZ7I9hZ9P0kxUNABlNR9agT099DBfLkQb9woXnkDllth7kMOjMlfDuvNBZPulYHc9iejgNtpKeVhN00UtdY7Obg";
+      "pk_live_51L249gJgDkfkJxuEhiMg6uPBuu12PMt9iqRVyVNqHhvfYqbWkDmKN6mKHvtGOOddsqVwHCeWe7d5AcV5Qp64TPvo00ERH39no8";
   return runApp(const MyApp());
 }
 

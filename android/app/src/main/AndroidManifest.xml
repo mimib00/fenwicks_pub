@@ -2,6 +2,7 @@
     package="com.example.fenwicks_pub">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
    <application
         android:label="Fenwick's Pub"
         android:name="${applicationName}"
