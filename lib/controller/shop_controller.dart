@@ -167,7 +167,7 @@ class ShopController extends GetxController {
     }
     try {
       var response = await http.post(
-        Uri.parse('https://europe-west1-fenwicks-pub.cloudfunctions.net/stripePaymentIntentrequest'),
+        Uri.parse('https://us-central1-fenwicks-pub-a46a5.cloudfunctions.net/stripePaymentIntentrequest'),
         body: {
           'email': user.email,
           'amount': (getCartTotal().toInt() * 100).toString(),
@@ -182,7 +182,7 @@ class ShopController extends GetxController {
           customerEphemeralKeySecret: paymentIntentData['ephemeralKey'],
           applePay: true,
           googlePay: true,
-          testEnv: true,
+          // testEnv: true,
           merchantDisplayName: "Fenwick's Pub",
           merchantCountryCode: "US",
         ),

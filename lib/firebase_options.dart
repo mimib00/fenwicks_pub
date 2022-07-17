@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAMN10JtGxI1pL7l-0VEn7bGYBfRtODD2g',
-    appId: '1:968413471908:android:705a8f879d2a9349a27231',
-    messagingSenderId: '968413471908',
-    projectId: 'fenwicks-pub',
-    storageBucket: 'fenwicks-pub.appspot.com',
+    apiKey: 'AIzaSyDVaVb4QiFl8iwxStuhoglA_5cKiuxTwGM',
+    appId: '1:449025692275:android:fa3162e44069b7f5351006',
+    messagingSenderId: '449025692275',
+    projectId: 'fenwicks-pub-a46a5',
+    storageBucket: 'fenwicks-pub-a46a5.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBRoKXgTF2QA55PgRqNF5BSIRuD7EKzjcY',
-    appId: '1:968413471908:ios:ab9b8d6b2ea4ca7ca27231',
-    messagingSenderId: '968413471908',
-    projectId: 'fenwicks-pub',
-    storageBucket: 'fenwicks-pub.appspot.com',
-    iosClientId: '968413471908-vn9mb9lqq2cbqk2a1f1gc07jt8to4e11.apps.googleusercontent.com',
+    apiKey: 'AIzaSyA3zAcRKDtjhm6nTdne8AiM6xE2qgOPmy8',
+    appId: '1:449025692275:ios:6c5a321c6ab9773b351006',
+    messagingSenderId: '449025692275',
+    projectId: 'fenwicks-pub-a46a5',
+    storageBucket: 'fenwicks-pub-a46a5.appspot.com',
+    iosClientId: '449025692275-rmg0esh8p1tttrhpaq27kc4aole0n82v.apps.googleusercontent.com',
     iosBundleId: 'com.example.fenwicksPub',
   );
 }

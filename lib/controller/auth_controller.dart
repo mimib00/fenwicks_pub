@@ -9,7 +9,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:location/location.dart';
 
 import '../routes/routes.dart';
 
@@ -34,6 +33,7 @@ class AuthController extends GetxController {
   /// create a user in firebase authentication.
   void register(Users user, String password) async {
     Get.dialog(const LoadingCard(), barrierDismissible: false);
+
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: user.email, password: password);
     } on FirebaseException catch (e) {
