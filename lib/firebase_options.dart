@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDVaVb4QiFl8iwxStuhoglA_5cKiuxTwGM',
-    appId: '1:449025692275:android:fa3162e44069b7f5351006',
+    appId: '1:449025692275:android:7be97a983ac0fb3d351006',
     messagingSenderId: '449025692275',
     projectId: 'fenwicks-pub-a46a5',
     storageBucket: 'fenwicks-pub-a46a5.appspot.com',
@@ -59,11 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyA3zAcRKDtjhm6nTdne8AiM6xE2qgOPmy8',
-    appId: '1:449025692275:ios:6c5a321c6ab9773b351006',
+    appId: '1:449025692275:ios:050f02a511d286dd351006',
     messagingSenderId: '449025692275',
     projectId: 'fenwicks-pub-a46a5',
     storageBucket: 'fenwicks-pub-a46a5.appspot.com',
-    iosClientId: '449025692275-rmg0esh8p1tttrhpaq27kc4aole0n82v.apps.googleusercontent.com',
-    iosBundleId: 'com.example.fenwicksPub',
+    iosClientId: '449025692275-8il3jpsih8974dclavi5brbko5f7coq9.apps.googleusercontent.com',
+    iosBundleId: 'com.shaderbytes.fenwicksPub',
   );
 }

@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:449025692275:android:fa3162e44069b7f5351006",
+        "mobilesdk_app_id": "1:449025692275:android:7be97a983ac0fb3d351006",
         "android_client_info": {
-          "package_name": "com.fenwicks.pub"
+          "package_name": "com.shaderbytes.fenwicksPub"
         }
       },
       "oauth_client": [
@@ -31,10 +31,10 @@
               "client_type": 3
             },
             {
-              "client_id": "449025692275-rmg0esh8p1tttrhpaq27kc4aole0n82v.apps.googleusercontent.com",
+              "client_id": "449025692275-8il3jpsih8974dclavi5brbko5f7coq9.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.fenwicksPub"
+                "bundle_id": "com.shaderbytes.fenwicksPub"
               }
             }
           ]

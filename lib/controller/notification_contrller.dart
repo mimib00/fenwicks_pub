@@ -2,12 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
 class NotificationController extends GetxController {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  final CollectionReference<Map<String, dynamic>> _ref = FirebaseFirestore.instance.collection("orders");
+  final CollectionReference<Map<String, dynamic>> _ref =
+      FirebaseFirestore.instance.collection("orders");
 
   final AndroidNotificationChannel channel = const AndroidNotificationChannel(
     'high_importance_channel',
@@ -15,7 +18,8 @@ class NotificationController extends GetxController {
     description: 'This channel is used for important notifications.',
     importance: Importance.high,
   );
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   Future<Map<String, dynamic>> getOrder(String id) async {
     DocumentSnapshot<Map<String, dynamic>>? doc;
@@ -24,19 +28,44 @@ class NotificationController extends GetxController {
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
     }
-    return {
-      "data": doc!.data()!,
-      "id": doc.id
-    };
+    return {"data": doc!.data()!, "id": doc.id};
+  }
+
+  void onDidReceiveLocalNotification(
+      int id, String? title, String? body, String? payload) async {
+    // display a dialog with the notification details, tap ok to go to another page
+    Get.dialog(
+      CupertinoAlertDialog(
+        title: Text(title ?? ""),
+        content: Text(body ?? ""),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: const Text('Ok'),
+            onPressed: () async {},
+          )
+        ],
+      ),
+    );
   }
 
   @override
   void onInit() async {
-    await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
 
     //
-    var initialzationSettingsAndroid = const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettings = InitializationSettings(android: initialzationSettingsAndroid);
+    const initialzationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    final IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings(
+            onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    final initializationSettings = InitializationSettings(
+      android: initialzationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     //
@@ -54,8 +83,9 @@ class NotificationController extends GetxController {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
+      AppleNotification? apple = message.notification?.apple;
 
-      if (notification != null && android != null) {
+      if (notification != null && android != null && apple != null) {
         flutterLocalNotificationsPlugin.show(
           notification.hashCode,
           notification.title,
@@ -78,7 +108,8 @@ class NotificationController extends GetxController {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
+      AppleNotification? apple = message.notification?.apple;
+      if (notification != null && android != null && apple != null) {
         Get.showSnackbar(
           GetSnackBar(
             title: notification.title,
