@@ -59,5 +59,9 @@
 	<string>The app needs it</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>The app needs it</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+	</array>
 </dict>
 </plist>
