@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
@@ -6,12 +8,15 @@ import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
+import 'package:fenwicks_pub/view/widget/loading.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:fenwicks_pub/view/widget/total_reward_points.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class Profile extends StatelessWidget {
   Profile({Key? key}) : super(key: key);
@@ -53,19 +58,68 @@ class Profile extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          onPressed: () => Get.back(),
+                          icon: Image.asset(
+                            kArrowBack,
+                            color: kWhiteColor,
+                            height: 14.25,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            await Get.defaultDialog(
+                              barrierDismissible: false,
+                              title: "Delete Account",
+                              titleStyle: const TextStyle(fontWeight: FontWeight.bold),
+                              content: const Text(
+                                "Are you sure you want to delete your account forever?",
+                                textAlign: TextAlign.center,
+                              ),
+                              confirm: TextButton(
+                                onPressed: () async {
+                                  Get.back();
+                                  Get.dialog(const LoadingCard(), barrierDismissible: false);
+                                  final url =
+                                      Uri.parse("https://us-central1-fenwicks-pub-a46a5.cloudfunctions.net/deleteUser");
+                                  try {
+                                    final res = await http.post(
+                                      url,
+                                      body: {
+                                        "uid": user.id,
+                                      },
+                                    );
+
+                                    if (res.statusCode == 400) throw "Unknown Error";
+                                    Get.back();
+                                    controller.logout();
+                                  } catch (e) {
+                                    Get.back();
+                                    Get.showSnackbar(errorCard(e.toString()));
+                                  }
+                                },
+                                child: const Text("Yes"),
+                              ),
+                              cancel: TextButton(
+                                onPressed: () => Get.back(),
+                                child: const Text("No"),
+                              ),
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.delete_forever_rounded,
+                            color: kWhiteColor,
+                          ),
+                        ),
+                      ],
+                    ),
                     ListTile(
                       leading: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () => Get.back(),
-                            icon: Image.asset(
-                              kArrowBack,
-                              color: kWhiteColor,
-                              height: 14.25,
-                            ),
-                          ),
-                        ],
+                        children: [],
                       ),
                     ),
                     const SizedBox(
@@ -260,9 +314,7 @@ class ProfileTiles extends StatelessWidget {
                     // update email
                     auth.updateEmail(controller.text.trim(), password.text.trim());
                   }
-                  Map<String, dynamic> data = {
-                    field: controller.text.trim()
-                  };
+                  Map<String, dynamic> data = {field: controller.text.trim()};
                   auth.updateUserData(data);
                 },
                 child: const Text("Update"),
