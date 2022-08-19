@@ -26,7 +26,11 @@ class AuthController extends GetxController {
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseException catch (e) {
       Get.back();
-      Get.showSnackbar(errorCard(e.message!));
+      if (e.code == "user-disabled") {
+        Get.showSnackbar(errorCard("This user has been deleted"));
+      } else {
+        Get.showSnackbar(errorCard(e.message!));
+      }
     }
   }
 
