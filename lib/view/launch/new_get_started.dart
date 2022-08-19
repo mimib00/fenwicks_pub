@@ -38,15 +38,7 @@ class NewGetStarted extends StatelessWidget {
               size: 30,
               weight: FontWeight.w700,
             ),
-            MyText(
-              paddingTop: 20,
-              paddingBottom: 30,
-              text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et',
-              size: 16,
-              weight: FontWeight.w600,
-              fontFamily: 'Open Sans',
-              height: 1.6,
-            ),
+            const SizedBox(height: 30),
             GestureDetector(
               onTap: () => Get.offAllNamed(AppLinks.auth),
               behavior: HitTestBehavior.opaque,
