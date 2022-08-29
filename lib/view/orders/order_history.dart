@@ -30,16 +30,13 @@ class _OrderHistoryState extends State<OrderHistory> {
       Get.showSnackbar(errorCard(e.message!));
     }
 
-    return {
-      "data": data,
-      "id": id
-    };
+    return {"data": data, "id": id};
   }
 
   void init() async {
     final AuthController authController = Get.find();
-    final user = authController.user.value!;
-    final _orders = user.orders;
+    final user = authController.user.value;
+    final _orders = user?.orders ?? [];
 
     for (var i = 0; i < _orders.length; i++) {
       final data = await getOrderInfo(_orders[i]);

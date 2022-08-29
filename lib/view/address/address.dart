@@ -26,7 +26,10 @@ class Address extends StatelessWidget {
       ),
       body: GetBuilder<AuthController>(
         builder: (controller) {
-          final user = controller.user.value!;
+          final user = controller.user.value;
+          if (user == null) {
+            return Container();
+          }
           return ListView.builder(
             padding: const EdgeInsets.symmetric(
               horizontal: 15,

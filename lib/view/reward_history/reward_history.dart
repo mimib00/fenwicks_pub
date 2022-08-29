@@ -32,8 +32,8 @@ class RewardHistory extends StatelessWidget {
       ),
       body: GetBuilder<AuthController>(
         builder: (controller) {
-          final user = controller.user.value!;
-          if (user.history.isEmpty) return Container();
+          final user = controller.user.value;
+          if (user == null || user.history.isEmpty) return Container();
 
           user.history.sort(
             (a, b) {
@@ -75,7 +75,8 @@ class RewardHistory extends StatelessWidget {
                       return RewardHistoryTiles(date: date.toDate(), doc: doc);
                     },
                     separatorBuilder: (context, index) {
-                      final previusDate = index == 0 ? history[index + 1]["date"] as Timestamp : history[index]["date"] as Timestamp;
+                      final previusDate =
+                          index == 0 ? history[index + 1]["date"] as Timestamp : history[index]["date"] as Timestamp;
 
                       if (index == 0) return DateTile(date: previusDate.toDate());
                       final date = history[index + 1]["date"] as Timestamp;

@@ -57,15 +57,16 @@ class Discover extends StatelessWidget {
                       if (snapshot.data == null || snapshot.data!.docs.isEmpty) return Container();
                       return FutureBuilder<List<Posts>>(
                         future: getOwner(snapshot.data!.docs),
-                        builder: (context, snapshot) {
-                          if (snapshot.data == null || snapshot.data!.isEmpty) return Container();
+                        builder: (context, snap) {
+                          if (snap.data == null || snap.data!.isEmpty) return Container();
                           return ListView.builder(
                             shrinkWrap: true,
                             physics: const BouncingScrollPhysics(),
                             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                            itemCount: snapshot.data!.length,
+                            itemCount: snap.data?.length,
                             itemBuilder: (context, index) {
-                              final post = snapshot.data![index];
+                              final post = snap.data![index];
+
                               return Post(post: post);
                             },
                           );
@@ -80,9 +81,7 @@ class Discover extends StatelessWidget {
           Positioned(
             bottom: 30,
             right: 15,
-            child: floatingActionButton(() {
-              Get.to(() => AddPost());
-            }),
+            child: floatingActionButton(),
           ),
         ],
       ),
@@ -91,7 +90,7 @@ class Discover extends StatelessWidget {
 
   Widget discoverHeader() {
     return GetBuilder<AuthController>(builder: (controller) {
-      final user = controller.user.value!;
+      final user = controller.user.value;
       return Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 15,
@@ -117,11 +116,11 @@ class Discover extends StatelessWidget {
               ],
             ),
             GestureDetector(
-              onTap: () => Get.to(() => const DiscoverProfile()),
+              onTap: () => user != null ? Get.to(() => const DiscoverProfile()) : null,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(360),
                 child: CachedNetworkImage(
-                  imageUrl: user.photo,
+                  imageUrl: user?.photo ?? "",
                   fit: BoxFit.cover,
                   height: 60,
                   width: 50,
@@ -142,40 +141,47 @@ class Discover extends StatelessWidget {
     });
   }
 
-  Widget floatingActionButton(VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        height: 60.35,
-        width: 60.35,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: kBlackColor.withOpacity(0.83),
-              offset: const Offset(0, 7),
-              blurRadius: 30,
-            ),
-          ],
-          borderRadius: BorderRadius.circular(100),
-          color: kWhiteColor.withOpacity(0.14),
-        ),
+  Widget floatingActionButton() {
+    return GetBuilder<AuthController>(builder: (controller) {
+      final user = controller.user.value;
+      return GestureDetector(
+        onTap: () {
+          if (user != null) {
+            Get.to(() => AddPost());
+          }
+        },
         child: Container(
-          height: Get.height,
-          width: Get.width,
+          padding: const EdgeInsets.all(5),
+          height: 60.35,
+          width: 60.35,
           decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: kBlackColor.withOpacity(0.83),
+                offset: const Offset(0, 7),
+                blurRadius: 30,
+              ),
+            ],
             borderRadius: BorderRadius.circular(100),
-            color: kBlackColor,
+            color: kWhiteColor.withOpacity(0.14),
           ),
-          child: Center(
-            child: Image.asset(
-              kAddIcon,
-              height: 22,
+          child: Container(
+            height: Get.height,
+            width: Get.width,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              color: kBlackColor,
+            ),
+            child: Center(
+              child: Image.asset(
+                kAddIcon,
+                height: 22,
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget discoverPeoples(String profileImage, name) {
@@ -228,8 +234,12 @@ class Post extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AuthController authController = Get.find();
-    final user = authController.user.value!;
-    bool isSaved = user.saved.isNotEmpty ? user.saved.where((element) => element == FirebaseFirestore.instance.collection("posts").doc(post.id)).isNotEmpty : false;
+    final user = authController.user.value;
+    bool isSaved = user != null && user.saved.isNotEmpty
+        ? user.saved
+            .where((element) => element == FirebaseFirestore.instance.collection("posts").doc(post.id))
+            .isNotEmpty
+        : false;
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: Column(
@@ -323,9 +333,13 @@ class Post extends StatelessWidget {
 
   Widget likeComment() {
     final AuthController authController = Get.find();
-    final user = authController.user.value!;
+    final user = authController.user.value;
 
-    bool isLiked = post.likes.isNotEmpty ? post.likes.where((element) => element == FirebaseFirestore.instance.collection("users").doc(user.id)).isNotEmpty : false;
+    bool isLiked = user != null && post.likes.isNotEmpty
+        ? post.likes
+            .where((element) => element == FirebaseFirestore.instance.collection("users").doc(user.id))
+            .isNotEmpty
+        : false;
 
     return GetBuilder<PostController>(
       init: PostController(),
@@ -336,10 +350,12 @@ class Post extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  if (isLiked) {
-                    controller.unLikePost(post.id!, user.id!);
-                  } else {
-                    controller.likePost(post.id!, user.id!);
+                  if (user != null) {
+                    if (isLiked) {
+                      controller.unLikePost(post.id!, user.id!);
+                    } else {
+                      controller.likePost(post.id!, user.id!);
+                    }
                   }
                 },
                 child: Row(

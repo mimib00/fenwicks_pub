@@ -33,6 +33,7 @@ class ShopController extends GetxController {
 
   /// Gets a list of the products.
   void getAllProducts() async {
+    products.clear();
     List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = [];
     try {
       var temp = await _ref.get();

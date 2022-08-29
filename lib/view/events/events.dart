@@ -44,10 +44,10 @@ class Events extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: totalRewardPoints(controller.user.value!.points),
+                        child: totalRewardPoints(controller.user.value?.points ?? 0),
                       ),
                       Visibility(
-                        visible: controller.user.value!.points > 0,
+                        visible: controller.user.value?.points == null ? false : controller.user.value!.points > 0,
                         child: MyText(
                           paddingTop: 15,
                           text: 'Spend your points now!',
@@ -324,14 +324,11 @@ class ProfileTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
       builder: (controller) {
-        final user = controller.user.value!;
-        final name = user.name.split(" ")[0];
+        final user = controller.user.value;
+        final name = user?.name.split(" ")[0];
         return ListTile(
-          // contentPadding: const EdgeInsets.symmetric(
-          //   horizontal: 15,
-          // ),
           title: MyText(
-            text: 'Hello, $name!',
+            text: name == null ? 'Hello, There!' : 'Hello, $name!',
             size: 18,
             weight: FontWeight.w700,
             fontFamily: 'Poppins',
@@ -352,7 +349,7 @@ class ProfileTile extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(360),
               child: CachedNetworkImage(
-                imageUrl: user.photo,
+                imageUrl: user?.photo ?? "",
                 fit: BoxFit.cover,
                 height: 60,
                 width: 50,

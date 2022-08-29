@@ -1,7 +1,9 @@
 import 'package:fenwicks_pub/controller/shop_controller.dart';
 import 'package:fenwicks_pub/model/product.dart';
+import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/address/address.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -74,7 +76,11 @@ class TotalPriceAndOrderNow extends StatelessWidget {
                   ? SizedBox(
                       width: 128.97,
                       child: MaterialButton(
-                        onPressed: product!.qty > 0 ? () => Get.to(() => Address()) : () {},
+                        onPressed: FirebaseAuth.instance.currentUser == null
+                            ? () => Get.toNamed(AppLinks.auth)
+                            : product!.qty > 0
+                                ? () => Get.to(() => Address())
+                                : () {},
                         height: 45.51,
                         elevation: 10,
                         color: product!.qty > 0 ? kPrimaryColor : kRedColor,
@@ -93,7 +99,9 @@ class TotalPriceAndOrderNow extends StatelessWidget {
                   : SizedBox(
                       width: 128.97,
                       child: MaterialButton(
-                        onPressed: onOrderTap ?? () => Get.to(() => Address()),
+                        onPressed: FirebaseAuth.instance.currentUser == null
+                            ? () => Get.toNamed(AppLinks.auth)
+                            : onOrderTap ?? () => Get.to(() => Address()),
                         height: 45.51,
                         elevation: 10,
                         color: kPrimaryColor,

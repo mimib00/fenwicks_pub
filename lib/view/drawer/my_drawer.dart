@@ -5,6 +5,7 @@ import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/custom_app_bar.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -67,11 +68,11 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
                 ),
                 GetBuilder<AuthController>(
                   builder: (controller) {
-                    final user = controller.user.value!;
-                    final name = user.name.split(" ")[0];
+                    final user = controller.user.value;
+                    final name = user?.name.split(" ")[0];
                     return MyText(
                       paddingTop: 15,
-                      text: 'Hey $name!',
+                      text: name == null ? 'Hey There!' : 'Hey $name!',
                       weight: FontWeight.w700,
                       size: 25,
                     );
@@ -88,7 +89,13 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
               ),
               DrawerTiles(
                 title: 'Rewards',
-                onTap: () => Get.toNamed(AppLinks.rewardHistory),
+                onTap: () {
+                  if (FirebaseAuth.instance.currentUser == null) {
+                    Get.toNamed(AppLinks.auth);
+                  } else {
+                    Get.toNamed(AppLinks.rewardHistory);
+                  }
+                },
               ),
               DrawerTiles(
                 title: 'Community',
@@ -102,9 +109,13 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
               ),
               DrawerTiles(
                 title: 'Orders',
-                onTap: () => Get.toNamed(
-                  AppLinks.orderHistory,
-                ),
+                onTap: () {
+                  if (FirebaseAuth.instance.currentUser == null) {
+                    Get.toNamed(AppLinks.auth);
+                  } else {
+                    Get.toNamed(AppLinks.orderHistory);
+                  }
+                },
               ),
               DrawerTiles(
                 title: 'Notifications',
@@ -115,14 +126,23 @@ class _MyDrawerState extends State<MyDrawer> with SingleTickerProviderStateMixin
           Column(
             children: [
               DrawerTiles(
-                title: 'Profile',
-                onTap: () => Get.toNamed(AppLinks.profile),
+                title: FirebaseAuth.instance.currentUser == null ? "Login" : 'Profile',
+                onTap: () {
+                  if (FirebaseAuth.instance.currentUser == null) {
+                    Get.toNamed(AppLinks.auth);
+                  } else {
+                    Get.toNamed(AppLinks.profile);
+                  }
+                },
               ),
               GetBuilder<AuthController>(
                 builder: (controller) {
-                  return DrawerTiles(
-                    title: 'Logout',
-                    onTap: () => controller.logout(),
+                  return Visibility(
+                    visible: FirebaseAuth.instance.currentUser != null,
+                    child: DrawerTiles(
+                      title: 'Logout',
+                      onTap: () => controller.logout(),
+                    ),
                   );
                 },
               ),

@@ -40,7 +40,7 @@ class DiscoverProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
       builder: (controller) {
-        final user = controller.user.value!;
+        final user = controller.user.value;
         return Scaffold(
           appBar: AppBar(
             leading: backButton(),
@@ -62,7 +62,7 @@ class DiscoverProfile extends StatelessWidget {
               ProfileCard(user: user),
               const SizedBox(height: 60),
               FutureBuilder<List<Posts>>(
-                future: getPosts(user.posts),
+                future: getPosts(user?.posts ?? []),
                 builder: (context, snapshot) {
                   if (snapshot.data == null || snapshot.data!.isEmpty) return Container();
                   final posts = snapshot.data!.where((element) => element.photo.isNotEmpty).toList();
@@ -99,7 +99,7 @@ class DiscoverProfile extends StatelessWidget {
 }
 
 class ProfileCard extends StatelessWidget {
-  final Users user;
+  final Users? user;
   const ProfileCard({
     Key? key,
     required this.user,
@@ -114,8 +114,8 @@ class ProfileCard extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             Container(
-              height: 140,
-              width: 140,
+              height: 120,
+              width: 120,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
                 border: Border.all(
@@ -126,7 +126,7 @@ class ProfileCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: CachedNetworkImage(
-                  imageUrl: user.photo,
+                  imageUrl: user?.photo ?? "",
                   fit: BoxFit.cover,
                   height: 150,
                   width: 150,
@@ -152,13 +152,13 @@ class ProfileCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               MyText(
-                text: user.name,
+                text: user?.name ?? "",
                 size: 21,
                 weight: FontWeight.w500,
                 fontFamily: 'Poppins',
               ),
               MyText(
-                text: user.address.isNotEmpty ? user.address.first["address"] : "",
+                text: user != null && user!.address.isNotEmpty ? user!.address.first["address"] : "",
                 size: 14,
                 color: kSecondaryColor,
                 fontFamily: 'Poppins',

@@ -54,7 +54,7 @@ class PostDetails extends StatelessWidget {
 
   Widget writeComment() {
     final AuthController authController = Get.find();
-    final user = authController.user.value!;
+    final user = authController.user.value;
     final PostController postController = Get.find();
     final TextEditingController controller = TextEditingController();
     return Column(
@@ -69,7 +69,7 @@ class PostDetails extends StatelessWidget {
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: CachedNetworkImage(
-                imageUrl: user.photo,
+                imageUrl: user?.photo ?? "",
                 fit: BoxFit.cover,
                 height: 50,
                 width: 50,
@@ -89,13 +89,15 @@ class PostDetails extends StatelessWidget {
                 controller: controller,
                 cursorColor: kSecondaryColor,
                 onSubmitted: (value) {
-                  Map<String, dynamic> comment = {
-                    "owner": FirebaseFirestore.instance.collection("users").doc(user.id),
-                    "comment": value.trim(),
-                    "created_at": Timestamp.now(),
-                    "likes": [],
-                  };
-                  postController.comment(post.id!, comment).then((value) => controller.clear());
+                  if (user != null) {
+                    Map<String, dynamic> comment = {
+                      "owner": FirebaseFirestore.instance.collection("users").doc(user.id),
+                      "comment": value.trim(),
+                      "created_at": Timestamp.now(),
+                      "likes": [],
+                    };
+                    postController.comment(post.id!, comment).then((value) => controller.clear());
+                  }
                 },
                 style: const TextStyle(
                   fontSize: 13,
@@ -158,9 +160,13 @@ class PostDetails extends StatelessWidget {
 
   Widget likeComment() {
     final AuthController authController = Get.find();
-    final user = authController.user.value!;
+    final user = authController.user.value;
 
-    bool isLiked = post.likes.isNotEmpty ? post.likes.where((element) => element == FirebaseFirestore.instance.collection("users").doc(user.id)).isNotEmpty : false;
+    bool isLiked = user != null && post.likes.isNotEmpty
+        ? post.likes
+            .where((element) => element == FirebaseFirestore.instance.collection("users").doc(user.id))
+            .isNotEmpty
+        : false;
 
     return GetBuilder<PostController>(
       init: PostController(),
@@ -174,10 +180,12 @@ class PostDetails extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      if (isLiked) {
-                        controller.unLikePost(post.id!, user.id!);
-                      } else {
-                        controller.likePost(post.id!, user.id!);
+                      if (user != null) {
+                        if (isLiked) {
+                          controller.unLikePost(post.id!, user.id!);
+                        } else {
+                          controller.likePost(post.id!, user.id!);
+                        }
                       }
                     },
                     child: Row(
@@ -279,7 +287,11 @@ class CommentsTiles extends StatelessWidget {
             final AuthController authController = Get.find();
             final user = authController.user.value!;
 
-            bool isLiked = likes.isNotEmpty ? likes.where((element) => element == FirebaseFirestore.instance.collection("users").doc(user.id)).isNotEmpty : false;
+            bool isLiked = likes.isNotEmpty
+                ? likes
+                    .where((element) => element == FirebaseFirestore.instance.collection("users").doc(user.id))
+                    .isNotEmpty
+                : false;
             return GestureDetector(
               onDoubleTap: () {
                 if (isLiked) {

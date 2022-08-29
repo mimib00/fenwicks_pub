@@ -45,6 +45,7 @@ class AuthController extends GetxController {
       Get.showSnackbar(errorCard(e.message!));
     }
     saveUserData(user);
+    Get.back();
   }
 
   /// Svae user data to a firestore collection call users
@@ -171,31 +172,17 @@ class AuthController extends GetxController {
 
   @override
   void onInit() {
-    FirebaseAuth.instance.authStateChanges().listen(
-      (user) {
-        if (user != null) {
-          if (emailVerified(user)) {
-            // got to home.
-            getUserData(user.uid).then((value) async {
-              messaging.onTokenRefresh.listen((token) async {
-                await updateUserData({"token": token});
-              });
-              final token = await messaging.getToken();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      getUserData(user.uid).then((value) async {
+        messaging.onTokenRefresh.listen((token) async {
+          await updateUserData({"token": token});
+        });
+        final token = await messaging.getToken();
 
-              await updateUserData({"token": token});
-
-              Get.offAllNamed(AppLinks.events);
-            });
-          } else {
-            // stay in login.
-            Get.showSnackbar(errorCard("Please check your email."));
-          }
-        } else {
-          // go to login.
-          Get.offAllNamed(AppLinks.getStarted);
-        }
-      },
-    );
+        await updateUserData({"token": token});
+      });
+    }
     super.onInit();
   }
 }

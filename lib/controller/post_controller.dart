@@ -48,7 +48,8 @@ class PostController extends GetxController {
         updateStatus("Uploading Photo");
         Get.dialog(StatusCard(title: status.value), barrierDismissible: false);
         TaskSnapshot snapshot = await storageRef.child(path).putFile(File(image!.value!.path));
-        if (snapshot.state == TaskState.error || snapshot.state == TaskState.canceled) throw "There was an error durring upload";
+        if (snapshot.state == TaskState.error || snapshot.state == TaskState.canceled)
+          throw "There was an error durring upload";
         // if image uploaded successfully
         if (snapshot.state == TaskState.success) {
           updateStatus("Finishing up");
@@ -64,9 +65,7 @@ class PostController extends GetxController {
 
           final post = await _ref.add(data);
           await authController.updateUserData({
-            "posts": FieldValue.arrayUnion([
-              _ref.doc(post.id)
-            ])
+            "posts": FieldValue.arrayUnion([_ref.doc(post.id)])
           });
           Get.back(closeOverlays: true);
           Get.showSnackbar(messageCard("Post submited successfully"));
@@ -83,9 +82,7 @@ class PostController extends GetxController {
         };
         final post = await _ref.add(data);
         await authController.updateUserData({
-          "posts": FieldValue.arrayUnion([
-            _ref.doc(post.id)
-          ])
+          "posts": FieldValue.arrayUnion([_ref.doc(post.id)])
         });
         Get.back(closeOverlays: true);
         Get.showSnackbar(messageCard("Post submited successfully"));
@@ -109,9 +106,7 @@ class PostController extends GetxController {
   void likePost(String id, String uid) async {
     try {
       await _ref.doc(id).set({
-        "likes": FieldValue.arrayUnion([
-          FirebaseFirestore.instance.collection("users").doc(uid)
-        ])
+        "likes": FieldValue.arrayUnion([FirebaseFirestore.instance.collection("users").doc(uid)])
       }, SetOptions(merge: true));
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
@@ -121,9 +116,7 @@ class PostController extends GetxController {
   void unLikePost(String id, String uid) async {
     try {
       await _ref.doc(id).set({
-        "likes": FieldValue.arrayRemove([
-          FirebaseFirestore.instance.collection("users").doc(uid)
-        ])
+        "likes": FieldValue.arrayRemove([FirebaseFirestore.instance.collection("users").doc(uid)])
       }, SetOptions(merge: true));
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
@@ -134,18 +127,14 @@ class PostController extends GetxController {
     try {
       Map<String, dynamic> temp = comment.map((key, value) => MapEntry(key, value));
       await _ref.doc(id).set({
-        "comments": FieldValue.arrayRemove([
-          comment
-        ])
+        "comments": FieldValue.arrayRemove([comment])
       }, SetOptions(merge: true));
       List<DocumentReference> likes = temp['likes'].cast<DocumentReference>();
       likes.add(FirebaseFirestore.instance.collection("users").doc(uid));
       temp["likes"] = likes;
 
       await _ref.doc(id).set({
-        "comments": FieldValue.arrayUnion([
-          temp
-        ])
+        "comments": FieldValue.arrayUnion([temp])
       }, SetOptions(merge: true));
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
@@ -157,17 +146,13 @@ class PostController extends GetxController {
     try {
       Map<String, dynamic> temp = comment.map((key, value) => MapEntry(key, value));
       await _ref.doc(id).set({
-        "comments": FieldValue.arrayRemove([
-          comment
-        ])
+        "comments": FieldValue.arrayRemove([comment])
       }, SetOptions(merge: true));
       List<DocumentReference> likes = temp['likes'].cast<DocumentReference>();
       likes.removeWhere((element) => element == FirebaseFirestore.instance.collection("users").doc(uid));
       temp["likes"] = likes;
       await _ref.doc(id).set({
-        "comments": FieldValue.arrayUnion([
-          temp
-        ])
+        "comments": FieldValue.arrayUnion([temp])
       }, SetOptions(merge: true));
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
@@ -179,9 +164,7 @@ class PostController extends GetxController {
     log(comment.toString());
     try {
       _ref.doc(id).set({
-        "comments": FieldValue.arrayUnion([
-          comment
-        ])
+        "comments": FieldValue.arrayUnion([comment])
       }, SetOptions(merge: true));
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
@@ -190,35 +173,35 @@ class PostController extends GetxController {
 
   void bookmark(String id) async {
     final AuthController authController = Get.find();
-    final user = authController.user.value!;
-    bool isSaved = user.saved.isNotEmpty ? user.saved.where((element) => element == FirebaseFirestore.instance.collection("posts").doc(id)).isNotEmpty : false;
+    final user = authController.user.value;
+    bool isSaved = user != null && user.saved.isNotEmpty
+        ? user.saved.where((element) => element == FirebaseFirestore.instance.collection("posts").doc(id)).isNotEmpty
+        : false;
 
     try {
-      if (isSaved) {
-        await FirebaseFirestore.instance.collection("users").doc(user.id).set(
-          {
-            "saved": FieldValue.arrayRemove([
-              FirebaseFirestore.instance.collection("posts").doc(id)
-            ])
-          },
-          SetOptions(merge: true),
-        );
-      } else {
-        await FirebaseFirestore.instance.collection("users").doc(user.id).set(
-          {
-            "saved": FieldValue.arrayUnion(
-              [
-                FirebaseFirestore.instance.collection("posts").doc(id)
-              ],
-            )
-          },
-          SetOptions(merge: true),
-        );
+      if (user != null) {
+        if (isSaved) {
+          await FirebaseFirestore.instance.collection("users").doc(user.id).set(
+            {
+              "saved": FieldValue.arrayRemove([FirebaseFirestore.instance.collection("posts").doc(id)])
+            },
+            SetOptions(merge: true),
+          );
+        } else {
+          await FirebaseFirestore.instance.collection("users").doc(user.id).set(
+            {
+              "saved": FieldValue.arrayUnion(
+                [FirebaseFirestore.instance.collection("posts").doc(id)],
+              )
+            },
+            SetOptions(merge: true),
+          );
+        }
       }
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
     }
-    await authController.getUserData(user.id!);
+    user != null ? await authController.getUserData(user.id!) : null;
     update();
   }
 }

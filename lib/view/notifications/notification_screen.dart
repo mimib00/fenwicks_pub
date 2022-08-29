@@ -28,7 +28,7 @@ class NotificationScreen extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
-    final user = controller.user.value!;
+    final user = controller.user.value;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -40,21 +40,23 @@ class NotificationScreen extends GetView<AuthController> {
           fontFamily: 'Poppins',
         ),
       ),
-      body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-          stream: listenToUser(user.id!),
-          builder: (context, snapshot) {
-            if (snapshot.data == null) return Container();
-            final users = Users.fromJson(snapshot.data!.data()!, uid: snapshot.data!.id);
-            final notifications = users.notifications;
-            notifications.sort((a, b) => b.date.compareTo(a.date));
-            return ListView.builder(
-              itemCount: notifications.length,
-              itemBuilder: (context, index) {
-                final notification = notifications[index];
-                return NotificationTile(notification: notification);
-              },
-            );
-          }),
+      body: user == null
+          ? Container()
+          : StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+              stream: listenToUser(user.id!),
+              builder: (context, snapshot) {
+                if (snapshot.data == null) return Container();
+                final users = Users.fromJson(snapshot.data!.data()!, uid: snapshot.data!.id);
+                final notifications = users.notifications;
+                notifications.sort((a, b) => b.date.compareTo(a.date));
+                return ListView.builder(
+                  itemCount: notifications.length,
+                  itemBuilder: (context, index) {
+                    final notification = notifications[index];
+                    return NotificationTile(notification: notification);
+                  },
+                );
+              }),
     );
   }
 }
