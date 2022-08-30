@@ -4,6 +4,7 @@ import 'package:fenwicks_pub/controller/auth_controller.dart';
 import 'package:fenwicks_pub/controller/post_controller.dart';
 import 'package:fenwicks_pub/model/post.dart';
 import 'package:fenwicks_pub/model/users.dart';
+import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/color.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/discover/add_post.dart';
@@ -12,6 +13,7 @@ import 'package:fenwicks_pub/view/drawer/my_drawer.dart';
 import 'package:fenwicks_pub/view/profile/discover_profile.dart';
 import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -148,6 +150,8 @@ class Discover extends StatelessWidget {
         onTap: () {
           if (user != null) {
             Get.to(() => AddPost());
+          } else {
+            Get.toNamed(AppLinks.auth);
           }
         },
         child: Container(
@@ -347,58 +351,85 @@ class Post extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      if (user != null) {
+                        if (isLiked) {
+                          controller.unLikePost(post.id!, user.id!);
+                        } else {
+                          controller.likePost(post.id!, user.id!);
+                        }
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.favorite,
+                          size: 28,
+                          color: isLiked ? kRedColor : kSecondaryColor,
+                        ),
+                        MyText(
+                          text: post.likes.length.toString(),
+                          size: 12,
+                          paddingLeft: 5,
+                          paddingBottom: 5,
+                          color: kSecondaryColor,
+                          weight: FontWeight.w600,
+                          fontFamily: 'Poppins',
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 35,
+                    ),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          kComment,
+                          height: 19.95,
+                        ),
+                        MyText(
+                          text: post.comments.length.toString(),
+                          size: 12,
+                          paddingLeft: 5,
+                          paddingBottom: 5,
+                          color: kSecondaryColor,
+                          weight: FontWeight.w600,
+                          fontFamily: 'Poppins',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               GestureDetector(
-                onTap: () {
-                  if (user != null) {
-                    if (isLiked) {
-                      controller.unLikePost(post.id!, user.id!);
-                    } else {
-                      controller.likePost(post.id!, user.id!);
-                    }
-                  }
+                onTap: () async {
+                  await FirebaseFirestore.instance.collection("reports").add(
+                    {
+                      "user": FirebaseAuth.instance.currentUser?.uid,
+                      "post": post.id,
+                    },
+                  );
+
+                  Get.snackbar(
+                    "Reported",
+                    "Your report has been sent, thanks for the help.",
+                    backgroundColor: Colors.green,
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
                 },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.favorite,
-                      size: 28,
-                      color: isLiked ? kRedColor : kSecondaryColor,
-                    ),
-                    MyText(
-                      text: post.likes.length.toString(),
-                      size: 12,
-                      paddingLeft: 5,
-                      paddingBottom: 5,
-                      color: kSecondaryColor,
-                      weight: FontWeight.w600,
-                      fontFamily: 'Poppins',
-                    ),
-                  ],
+                child: const Icon(
+                  Icons.report_rounded,
+                  color: Colors.red,
+                  size: 28,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 35,
-                ),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      kComment,
-                      height: 19.95,
-                    ),
-                    MyText(
-                      text: post.comments.length.toString(),
-                      size: 12,
-                      paddingLeft: 5,
-                      paddingBottom: 5,
-                      color: kSecondaryColor,
-                      weight: FontWeight.w600,
-                      fontFamily: 'Poppins',
-                    ),
-                  ],
-                ),
-              ),
+              )
             ],
           ),
         );

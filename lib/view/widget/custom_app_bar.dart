@@ -1,5 +1,7 @@
+import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/qr_scaner.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -42,7 +44,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               )
             : IconButton(
-                onPressed: () => Get.to(() => const QRScan()),
+                onPressed: () {
+                  if (FirebaseAuth.instance.currentUser != null) {
+                    Get.to(() => const QRScan());
+                  } else {
+                    Get.toNamed(AppLinks.auth);
+                  }
+                },
                 icon: Image.asset(
                   kQrIcon,
                   height: 20,
