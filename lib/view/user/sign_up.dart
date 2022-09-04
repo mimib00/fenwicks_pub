@@ -11,7 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SignUp extends StatefulWidget {
   final TabController controller;
-  SignUp({
+  const SignUp({
     Key? key,
     required this.controller,
   }) : super(key: key);

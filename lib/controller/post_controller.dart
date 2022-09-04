@@ -48,8 +48,9 @@ class PostController extends GetxController {
         updateStatus("Uploading Photo");
         Get.dialog(StatusCard(title: status.value), barrierDismissible: false);
         TaskSnapshot snapshot = await storageRef.child(path).putFile(File(image!.value!.path));
-        if (snapshot.state == TaskState.error || snapshot.state == TaskState.canceled)
+        if (snapshot.state == TaskState.error || snapshot.state == TaskState.canceled) {
           throw "There was an error durring upload";
+        }
         // if image uploaded successfully
         if (snapshot.state == TaskState.success) {
           updateStatus("Finishing up");

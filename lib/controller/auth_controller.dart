@@ -10,8 +10,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../routes/routes.dart';
-
 class AuthController extends GetxController {
   final _ref = FirebaseFirestore.instance.collection("users");
   final storageRef = FirebaseStorage.instance.ref();
@@ -37,19 +35,18 @@ class AuthController extends GetxController {
   /// create a user in firebase authentication.
   void register(Users user, String password) async {
     Get.dialog(const LoadingCard(), barrierDismissible: false);
-
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: user.email, password: password);
+      await saveUserData(user);
+      Get.back();
     } on FirebaseException catch (e) {
       Get.back();
       Get.showSnackbar(errorCard(e.message!));
     }
-    saveUserData(user);
-    Get.back();
   }
 
   /// Svae user data to a firestore collection call users
-  void saveUserData(Users user) async {
+  Future<void> saveUserData(Users user) async {
     User userCredential = FirebaseAuth.instance.currentUser!;
     try {
       _ref.doc(userCredential.uid).set(user.toMap());
@@ -57,7 +54,7 @@ class AuthController extends GetxController {
       Get.showSnackbar(errorCard(e.message!));
     }
     userCredential.sendEmailVerification();
-    Get.showSnackbar(messageCard("Check email and verify email"));
+    // Get.showSnackbar(messageCard("Check email and verify email"));
   }
 
   /// Update user data in user's firestore collection call users

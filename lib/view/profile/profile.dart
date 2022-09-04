@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fenwicks_pub/controller/auth_controller.dart';
@@ -11,7 +9,6 @@ import 'package:fenwicks_pub/view/widget/error_card.dart';
 import 'package:fenwicks_pub/view/widget/loading.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:fenwicks_pub/view/widget/total_reward_points.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -119,7 +116,7 @@ class Profile extends StatelessWidget {
                     ListTile(
                       leading: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [],
+                        children: const [],
                       ),
                     ),
                     const SizedBox(
