@@ -44,7 +44,7 @@ class TopSaleAndFutureProducts extends StatelessWidget {
                 init: ShopController(),
                 builder: (controller) {
                   if (controller.products.isEmpty) {
-                    controller.getAllProducts();
+                    controller.getProducts();
                   }
                   final products = controller.products;
 

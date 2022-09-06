@@ -27,7 +27,7 @@ class EventController extends GetxController {
     ),
     const EventCard(
       icon: kMusicIcon,
-      title: 'Dancing',
+      title: 'Theme Nights',
       iconSize: 23.48,
       type: EventTypes.dancing,
     ),
@@ -55,9 +55,7 @@ class EventController extends GetxController {
       _ref.doc(event.id).set(
         {
           "going": FieldValue.arrayUnion(
-            [
-              FirebaseFirestore.instance.collection("users").doc(auth.user.value!.id)
-            ],
+            [FirebaseFirestore.instance.collection("users").doc(auth.user.value!.id)],
           )
         },
         SetOptions(
@@ -78,9 +76,7 @@ class EventController extends GetxController {
       _ref.doc(event.id).set(
         {
           "going": FieldValue.arrayRemove(
-            [
-              FirebaseFirestore.instance.collection("users").doc(auth.user.value!.id)
-            ],
+            [FirebaseFirestore.instance.collection("users").doc(auth.user.value!.id)],
           )
         },
         SetOptions(

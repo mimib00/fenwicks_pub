@@ -32,19 +32,33 @@ class ShopController extends GetxController {
   Map<String, dynamic> orderData = {};
 
   /// Gets a list of the products.
-  void getAllProducts() async {
+  // Future<void> getAllProducts() async {
+  //   products.clear();
+  //   try {
+  //     var data = await _ref.get();
+  //     print(data.docs.length);
+  //     products.value = data.docs.map((e) => Product.fromJson(e.data(), e.id)).toList();
+  //     // for (var doc in data.docs) {
+  //     //   // print(doc.data());
+  //     //   // products.add(Product.fromJson(doc.data(), doc.id));
+  //     // }
+  //     update();
+  //   } on FirebaseException catch (e) {
+  //     Get.showSnackbar(errorCard(e.message!));
+  //   }
+  // }
+
+  Future<void> getProducts() async {
     products.clear();
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = [];
     try {
-      var temp = await _ref.get();
-      docs = temp.docs;
+      final snap = await FirebaseFirestore.instance.collection("products").get();
+      for (var doc in snap.docs) {
+        products.add(Product.fromJson(doc.data(), doc.id));
+      }
+      update();
     } on FirebaseException catch (e) {
       Get.showSnackbar(errorCard(e.message!));
     }
-    for (var doc in docs) {
-      products.add(Product.fromJson(doc.data(), doc.id));
-    }
-    update();
   }
 
   void addToCart(Product product) {

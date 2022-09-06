@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       title: 'Fenwick\'s Pub',
       theme: AppStyling.styling,
       themeMode: ThemeMode.light,
-      initialRoute: AppLinks.splashScreen,
+      initialRoute: AppLinks.getStarted,
       getPages: AppRoutes.pages,
     );
   }

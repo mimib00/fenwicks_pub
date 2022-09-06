@@ -54,7 +54,6 @@ class AuthController extends GetxController {
       Get.showSnackbar(errorCard(e.message!));
     }
     userCredential.sendEmailVerification();
-    // Get.showSnackbar(messageCard("Check email and verify email"));
   }
 
   /// Update user data in user's firestore collection call users

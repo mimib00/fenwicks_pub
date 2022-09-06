@@ -1,4 +1,6 @@
 import 'package:fenwicks_pub/controller/points_controller.dart';
+import 'package:fenwicks_pub/view/widget/back_button.dart';
+import 'package:fenwicks_pub/view/widget/my_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scan/scan.dart';
@@ -16,6 +18,16 @@ class _QRScanState extends State<QRScan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        leading: backButton(),
+        title: MyText(
+          text: 'Scan QR',
+          size: 18,
+          weight: FontWeight.w500,
+          fontFamily: 'Poppins',
+        ),
+      ),
       body: GetBuilder<PointController>(
           init: PointController(),
           builder: (ctrl) {

@@ -23,175 +23,176 @@ class Events extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<EventController>(
-      init: EventController(),
-      builder: (controller) {
-        if (controller.events.isEmpty) {
-          controller.getComingEvents();
-        }
-        final events = controller.events;
+    return MyDrawer(
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        children: [
+          const ProfileTile(),
+          const SizedBox(height: 30),
+          GetBuilder<AuthController>(
+            builder: (controller) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: totalRewardPoints(controller.user.value?.points ?? 0),
+                  ),
+                  Visibility(
+                    visible: controller.user.value?.points == null ? false : controller.user.value!.points > 0,
+                    child: MyText(
+                      paddingTop: 15,
+                      text: 'Spend your points now!',
+                      align: TextAlign.center,
+                      weight: FontWeight.w300,
+                      fontFamily: 'Poppins',
+                      paddingBottom: 20,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          Center(
+            child: Container(
+              width: Get.width * 0.8,
+              height: 1,
+              color: kWhiteColor.withOpacity(0.10),
+            ),
+          ),
+          const SizedBox(height: 20),
+          // const HorizontalCalendar(),
+          GetBuilder<EventController>(
+              init: EventController(),
+              builder: (controller) {
+                if (controller.events.isEmpty) {
+                  controller.getComingEvents();
+                }
+                final events = controller.events;
 
-        return MyDrawer(
-          child: ListView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            children: [
-              const ProfileTile(),
-              const SizedBox(height: 30),
-              GetBuilder<AuthController>(
-                builder: (controller) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: totalRewardPoints(controller.user.value?.points ?? 0),
-                      ),
-                      Visibility(
-                        visible: controller.user.value?.points == null ? false : controller.user.value!.points > 0,
-                        child: MyText(
-                          paddingTop: 15,
-                          text: 'Spend your points now!',
-                          align: TextAlign.center,
-                          weight: FontWeight.w300,
-                          fontFamily: 'Poppins',
-                          paddingBottom: 20,
+                return Column(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 25, 15, 25),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              MyText(
+                                text: 'All Events',
+                                size: 16,
+                                weight: FontWeight.w700,
+                                fontFamily: 'Poppins',
+                              ),
+                            ],
+                          ),
                         ),
+                        SizedBox(
+                          height: 100,
+                          width: Get.width,
+                          child: Row(
+                            children: controller.eventCards,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 25, 15, 25),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              MyText(
+                                text: 'Recent Events',
+                                size: 16,
+                                weight: FontWeight.w700,
+                              ),
+                              MyText(
+                                onTap: () {},
+                                text: 'View All',
+                                size: 11,
+                              ),
+                            ],
+                          ),
+                        ),
+                        events.isEmpty
+                            ? Container()
+                            : ListView.builder(
+                                itemCount: events.length > 4 ? 4 : events.length,
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  var data = events[index];
+
+                                  return RecentEventsWidget(event: data);
+                                },
+                              )
+                      ],
+                    ),
+                  ],
+                );
+              }),
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    MyText(
+                      text: 'Shop',
+                      size: 16,
+                      weight: FontWeight.w700,
+                      fontFamily: 'Poppins',
+                    ),
+                    MyText(
+                      onTap: () => Get.toNamed(
+                        AppLinks.topSaleAndFutureProducts,
                       ),
-                    ],
+                      text: 'View All',
+                      size: 11,
+                      weight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                    ),
+                  ],
+                ),
+              ),
+              Obx(
+                () {
+                  ShopController ctrl = Get.put(ShopController());
+                  if (ctrl.products.isEmpty) {
+                    ctrl.getProducts();
+                  }
+                  final products = ctrl.products;
+                  if (products.isEmpty) return Container();
+                  return SizedBox(
+                    height: 220,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 7),
+                      itemCount: products.length > 5 ? 5 : products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return Row(
+                          children: [
+                            BearGlassWidget(
+                              product: product,
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   );
                 },
               ),
-              Center(
-                child: Container(
-                  width: Get.width * 0.8,
-                  height: 1,
-                  color: kWhiteColor.withOpacity(0.10),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // const HorizontalCalendar(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 25, 15, 25),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        MyText(
-                          text: 'All Events',
-                          size: 16,
-                          weight: FontWeight.w700,
-                          fontFamily: 'Poppins',
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 100,
-                    width: Get.width,
-                    child: Row(
-                      children: controller.eventCards,
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 25, 15, 25),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        MyText(
-                          text: 'Recent Events',
-                          size: 16,
-                          weight: FontWeight.w700,
-                        ),
-                        MyText(
-                          onTap: () {},
-                          text: 'View All',
-                          size: 11,
-                        ),
-                      ],
-                    ),
-                  ),
-                  events.isEmpty
-                      ? Container()
-                      : ListView.builder(
-                          itemCount: events.length > 4 ? 4 : events.length,
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            var data = events[index];
-
-                            return RecentEventsWidget(event: data);
-                          },
-                        )
-                ],
-              ),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        MyText(
-                          text: 'Shop',
-                          size: 16,
-                          weight: FontWeight.w700,
-                          fontFamily: 'Poppins',
-                        ),
-                        MyText(
-                          onTap: () => Get.toNamed(
-                            AppLinks.topSaleAndFutureProducts,
-                          ),
-                          text: 'View All',
-                          size: 11,
-                          weight: FontWeight.w400,
-                          fontFamily: 'Poppins',
-                        ),
-                      ],
-                    ),
-                  ),
-                  GetBuilder<ShopController>(
-                    init: ShopController(),
-                    builder: (ctrl) {
-                      if (ctrl.products.isEmpty) {
-                        ctrl.getAllProducts();
-                      }
-                      final products = ctrl.products;
-                      if (products.isEmpty) return Container();
-                      return SizedBox(
-                        height: 220,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 7,
-                          ),
-                          itemCount: products.length > 5 ? 5 : products.length,
-                          itemBuilder: (context, index) {
-                            final product = products[index];
-                            return Row(
-                              children: [
-                                BearGlassWidget(
-                                  product: product,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
             ],
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

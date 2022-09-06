@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/images.dart';
 import 'package:fenwicks_pub/view/widget/my_text.dart';
@@ -9,6 +11,9 @@ class NewGetStarted extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Timer(const Duration(seconds: 2), () {
+      Get.offAllNamed(AppLinks.events);
+    });
     return Scaffold(
       body: Container(
         width: Get.width,
@@ -39,24 +44,6 @@ class NewGetStarted extends StatelessWidget {
               weight: FontWeight.w700,
             ),
             const SizedBox(height: 30),
-            GestureDetector(
-              onTap: () => Get.offAllNamed(AppLinks.auth),
-              behavior: HitTestBehavior.opaque,
-              child: Row(
-                children: [
-                  MyText(
-                    paddingRight: 10,
-                    text: 'Continue',
-                    size: 16,
-                    weight: FontWeight.w700,
-                  ),
-                  Image.asset(
-                    kArrowForwardBold,
-                    height: 15.77,
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
