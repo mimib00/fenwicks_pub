@@ -24,6 +24,7 @@ class LocationController extends GetxController {
         return;
       }
     }
+
     locationData = await location.getLocation();
     super.onInit();
   }

@@ -1,4 +1,5 @@
 import 'package:fenwicks_pub/controller/binding.dart';
+import 'package:fenwicks_pub/controller/location_controller.dart';
 import 'package:fenwicks_pub/firebase_options.dart';
 import 'package:fenwicks_pub/routes/routes.dart';
 import 'package:fenwicks_pub/view/constant/app_styling.dart';
@@ -17,6 +18,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging.instance.subscribeToTopic('all');
+  Get.put(LocationController(), permanent: true);
 
   Stripe.publishableKey =
       "pk_live_51L249gJgDkfkJxuEhiMg6uPBuu12PMt9iqRVyVNqHhvfYqbWkDmKN6mKHvtGOOddsqVwHCeWe7d5AcV5Qp64TPvo00ERH39no8";
